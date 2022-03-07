@@ -1,4 +1,6 @@
 lille\flopbox\api\Main.class
+lille\flopbox\api\AuthenticationFilter.class
 lille\flopbox\api\MyResource.class
 lille\flopbox\api\FileManager.class
 lille\flopbox\api\AuthResource.class
+lille\flopbox\api\Secured.class

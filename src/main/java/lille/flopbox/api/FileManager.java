@@ -18,4 +18,34 @@ public class FileManager {
         }
         return result;
     }
+
+    public static boolean canAccess(String authHeader)
+    {
+        if(authHeader == null || authHeader.length() == 0)
+            return false;
+
+        String auth ;
+        ArrayList<String> content;
+        if(authHeader.startsWith("Basic"))
+            auth = authHeader.substring("Basic".length()).trim();
+        else
+            auth = authHeader;
+
+        try {
+            content = getFileContent("passwd.txt");
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException("File password.txt not found");
+        } catch (IOException e) {
+            throw new RuntimeException("IOExecption : "+e.getMessage());
+        }
+
+        for(String elem : content)
+        {
+            if(elem.equals(auth))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
 }
