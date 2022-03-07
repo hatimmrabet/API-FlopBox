@@ -1,12 +1,24 @@
 {
-    "users" : [
+  "users": [
+    {
+      "username": "hatim",
+      "password": "12345",
+      "serveurs": [
         {
-            "name" : "hatim",
-            "mdp" : "12345"
-        },
-        {
-            "name" : "user",
-            "mdp" : "user"
+          "url":"ftp.hatim",
+          "alias":"hatim"
         }
-    ]
+      ] 
+    },
+    {
+      "username": "admin",
+      "password": "admin",
+      "serveurs": [
+        {
+          "url":"ftp.amdin.com",
+          "alias":"test"
+        }
+      ] 
+    }
+  ]
 }

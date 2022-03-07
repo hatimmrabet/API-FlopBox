@@ -17,7 +17,6 @@ public class AuthenticationFilter implements ContainerRequestFilter {
     @Override
     public void filter(ContainerRequestContext requestContext) {
         String auth = requestContext.getHeaderString("Authorization");
-        System.out.println(auth);
         if(!FileManager.canAccess(auth))
         {
             requestContext.abortWith(Response.status(Status.UNAUTHORIZED).entity("Protected endpoint: You can not acces it.").build());
