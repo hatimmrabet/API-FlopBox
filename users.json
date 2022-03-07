@@ -1,0 +1,12 @@
+{
+    "users" : [
+        {
+            "name" : "hatim",
+            "mdp" : "12345"
+        },
+        {
+            "name" : "user",
+            "mdp" : "user"
+        }
+    ]
+}
