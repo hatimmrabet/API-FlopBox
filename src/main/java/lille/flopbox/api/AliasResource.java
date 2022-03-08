@@ -1,5 +1,7 @@
 package lille.flopbox.api;
 
+import java.io.IOException;
+
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
@@ -16,10 +18,11 @@ public class AliasResource {
     @GET
     @Secured
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAllAlias(@HeaderParam("Authorization") String authHeader) throws ParseException
+    public Response getAllAlias(@HeaderParam("Authorization") String authHeader) throws ParseException, IOException
     {
-        String username = FileManager.getUsername(authHeader);
-        return Response.status(Status.OK).entity(FileManager.getServeursByUsername(username).toJSONString()).build();
+        String username = FileManager.getUsernameFromAuth(authHeader);
+        FileManager.saveFileToJson();
+        return Response.status(Status.OK).entity(UsersList.getInstance().getServeursByUsername(username)).build();
     }
     
 }

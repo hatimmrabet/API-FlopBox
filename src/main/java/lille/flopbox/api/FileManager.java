@@ -3,6 +3,7 @@ package lille.flopbox.api;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Base64;
@@ -63,8 +64,7 @@ public class FileManager {
         return false;
     }
 
-
-    public static String getUsername(String authHeader)
+    public static String getUsernameFromAuth(String authHeader)
     {
         String username;
         authHeader = authHeader.substring("Basic".length()).trim();
@@ -78,35 +78,15 @@ public class FileManager {
         FileReader reader = new FileReader(filename);
         JSONParser jsonParser = new JSONParser();
         JSONObject content = (JSONObject) jsonParser.parse(reader);
+        reader.close();
         return (JSONArray) content.get("users");
     }
-
-    public static JSONObject getUserByUsername(String username)
+ 
+    public static void saveFileToJson() throws IOException, ParseException
     {
-        JSONArray users;
-        try {
-            users = getJsonFileContent("users.json");
-            for(int i=0; i<users.size(); i++)
-            {
-                String username1 = ((JSONObject) users.get(i)).get("username").toString();
-                if(username.equals(username1))
-                {
-                    return (JSONObject) users.get(i);
-                }
-            }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return null;
-    } 
-
-    public static JSONArray getServeursByUsername(String username)
-    {
-        JSONObject user = getUserByUsername(username);
-        return (JSONArray) user.get("serveurs");
+        FileWriter f = new FileWriter("users1.json");
+        f.write( UsersList.getInstance().toString());
+        f.flush();
+        f.close();
     }
 }
