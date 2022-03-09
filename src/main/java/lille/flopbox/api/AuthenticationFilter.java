@@ -1,5 +1,7 @@
 package lille.flopbox.api;
 
+import java.io.IOException;
+
 import javax.annotation.Priority;
 import javax.ws.rs.Priorities;
 import javax.ws.rs.container.ContainerRequestContext;
@@ -8,14 +10,13 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.ext.Provider;
 
-
 @Secured
 @Provider
 @Priority(Priorities.AUTHENTICATION)
 public class AuthenticationFilter implements ContainerRequestFilter {
 
     @Override
-    public void filter(ContainerRequestContext requestContext) {
+    public void filter(ContainerRequestContext requestContext) throws IOException {
         String auth = requestContext.getHeaderString("Authorization");
         if(!FileManager.canAccess(auth))
         {

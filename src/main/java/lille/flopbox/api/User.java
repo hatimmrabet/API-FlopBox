@@ -25,6 +25,7 @@ public class User {
             String value = arr.get(keystr).toString();
             this.serveurs.put(keystr, value);
         };
+        this.serveurs.put("test", "testval");
     }
     
     public String toString()

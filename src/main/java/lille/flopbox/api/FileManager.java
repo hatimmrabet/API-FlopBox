@@ -1,12 +1,14 @@
 package lille.flopbox.api;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Collection;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -33,30 +35,17 @@ public class FileManager {
             return false;
 
         String auth ;
-        JSONArray users;
+        Collection<User> users;
 
         if(authHeader.startsWith("Basic"))
             auth = authHeader.substring("Basic".length()).trim();
         else
             auth = authHeader;
 
-        try {
-            users = getJsonFileContent("users.json");
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException("File password.txt not found");
-        } catch (IOException e) {
-            throw new RuntimeException("IOExecption : "+e.getMessage());
-        } catch (ParseException e) {
-            throw new RuntimeException("ParseException : "+e.getMessage());
-        }
-
-        String encoded;
-        for(int i=0; i<users.size(); i++)
+        users = UsersList.getInstance().getUsers().values();
+        for(User u : users)
         {
-            String username = ((JSONObject) users.get(i)).get("username").toString();
-            String password = ((JSONObject) users.get(i)).get("password").toString();
-            encoded = new String(Base64.getEncoder().encode((username+":"+password).getBytes()));
-            if(encoded.equals(auth))
+            if(u.auth.equals(auth))
             {
                 return true;
             }
@@ -73,20 +62,30 @@ public class FileManager {
         return username;
     }
 
-    public static JSONArray getJsonFileContent(String filename) throws FileNotFoundException, IOException, ParseException
+    public static JSONArray getJsonFileContent(String filename)
     {
-        FileReader reader = new FileReader(filename);
-        JSONParser jsonParser = new JSONParser();
-        JSONObject content = (JSONObject) jsonParser.parse(reader);
-        reader.close();
+        JSONObject content = new JSONObject();
+        try {
+            content = (JSONObject) new JSONParser().parse(new FileReader(filename));
+        } catch (IOException | ParseException e) {
+            throw new RuntimeException("getJsonFileContent : "+e.getMessage());
+        }
         return (JSONArray) content.get("users");
     }
  
-    public static void saveFileToJson() throws IOException, ParseException
+    /***
+     * NOT WORKING
+     */
+    public static void saveFileToJson()
     {
-        FileWriter f = new FileWriter("users1.json");
-        f.write( UsersList.getInstance().toString());
-        f.flush();
-        f.close();
+        File file = new File("users.json");
+        // file.deleteOnExit();
+        try (FileWriter f = new FileWriter(file)) {
+            f.write(UsersList.getInstance().toString());
+            f.flush();
+            f.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e.getMessage());
+        }
     }
 }

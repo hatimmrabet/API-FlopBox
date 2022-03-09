@@ -3,18 +3,12 @@
       {
         "username": "hatim",
         "password": "12345",
-        "serveurs": {
-            "url":"ftp.hatim",
-            "alias":"hatim"
-          }
+        "serveurs": { "alias": "hatim", "url": "ftp.hatim" }
       },
       {
         "username": "admin",
         "password": "12345",
-        "serveurs": {
-            "admin url":"ftp.admin",
-            "alias":"hatim"
-          }
+        "serveurs": { "admin url": "ftp.admin", "alias": "hatim" }
       }
     ]
   }

@@ -1,18 +1,16 @@
 package lille.flopbox.api;
 
-import java.io.IOException;
 import java.util.HashMap;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.ParseException;
 
 public class UsersList {
     
     private static UsersList instance = null;
     private HashMap<String, User> users;
     
-    private UsersList() throws IOException, ParseException
+    private UsersList()
     {
         JSONArray jsonUsers = FileManager.getJsonFileContent("users.json");
         this.users = new HashMap<>();
@@ -23,7 +21,7 @@ public class UsersList {
         }
     }
 
-    public static UsersList getInstance() throws IOException, ParseException
+    public static UsersList getInstance()
     {
         if(instance == null)
             return new UsersList();
@@ -50,19 +48,13 @@ public class UsersList {
     public String toString()
     {
         String ret = "{ \"users\":[";
-        try {
-            int i=0;
-            for(User u : UsersList.getInstance().getUsers().values())
-            {
-                ret += u.toString();
-                if(i!=UsersList.getInstance().getUsers().values().size())
-                    ret += ",";
-                i++;
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ParseException e) {
-            e.printStackTrace();
+        int i=0;
+        for(User u : UsersList.getInstance().getUsers().values())
+        {
+            ret += u.toString();
+            if(i!=UsersList.getInstance().getUsers().values().size())
+                ret += ",";
+            i++;
         }
         return ret+"]}";
     }
