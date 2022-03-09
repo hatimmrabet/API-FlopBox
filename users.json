@@ -1,15 +1,1 @@
-{
-    "users": [
-      {
-        "username": "hatim",
-        "password": "12345",
-        "serveurs": { "alias": "hatim", "url": "ftp.hatim" }
-      },
-      {
-        "username": "admin",
-        "password": "12345",
-        "serveurs": { "admin url": "ftp.admin", "alias": "hatim" }
-      }
-    ]
-  }
-  
+{"hatim":{"password":"12345","serveurs":{"test":"testval","alias":"hatim","url":"ftp.hatim"},"username":"hatim"},"admin":{"password":"12345","serveurs":{"test":"testval","admin url":"ftp.admin","alias":"hatim"},"username":"admin"}}

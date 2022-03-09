@@ -1,10 +1,10 @@
 package lille.flopbox.api;
 
 import java.util.HashMap;
-
-import org.json.simple.JSONArray;
+import java.util.Set;
 import org.json.simple.JSONObject;
 
+@SuppressWarnings("unchecked")
 public class UsersList {
     
     private static UsersList instance = null;
@@ -12,11 +12,12 @@ public class UsersList {
     
     private UsersList()
     {
-        JSONArray jsonUsers = FileManager.getJsonFileContent("users.json");
+        JSONObject jsonUsers = FileManager.getJsonFileContent("users.json");
         this.users = new HashMap<>();
-        for(int i=0; i<jsonUsers.size(); i++)
+        Set<String> keys = jsonUsers.keySet();
+        for(String key :  keys)
         {
-            User u = new User( (JSONObject) jsonUsers.get(i));
+            User u = new User( (JSONObject) jsonUsers.get(key));
             this.users.put(u.username, u);
         }
     }
@@ -24,8 +25,8 @@ public class UsersList {
     public static UsersList getInstance()
     {
         if(instance == null)
-            return new UsersList();
-         return instance;
+            instance = new UsersList();
+        return instance;
     }
 
 
@@ -45,17 +46,27 @@ public class UsersList {
         return this.users.get(username).serveurs;
     }
 
-    public String toString()
+    // public String toString()
+    // {
+    //     String ret = "{ \"users\":[";
+    //     int i=0;
+    //     for(User u : UsersList.getInstance().getUsers().values())
+    //     {
+    //         ret += u.toString();
+    //         if(i!=UsersList.getInstance().getUsers().values().size())
+    //             ret += ",";
+    //         i++;
+    //     }
+    //     return ret+"]}";
+    // }
+
+    public JSONObject getUsersJSON()
     {
-        String ret = "{ \"users\":[";
-        int i=0;
-        for(User u : UsersList.getInstance().getUsers().values())
+        JSONObject obj = new JSONObject();
+        for(User u : this.users.values())
         {
-            ret += u.toString();
-            if(i!=UsersList.getInstance().getUsers().values().size())
-                ret += ",";
-            i++;
+            obj.put(u.username, (JSONObject) u.getUserJson());
         }
-        return ret+"]}";
+        return obj;
     }
 }

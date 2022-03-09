@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 import org.json.simple.JSONObject;
 
+@SuppressWarnings("unchecked")
 public class User {
 
     String username;
@@ -25,21 +26,32 @@ public class User {
             String value = arr.get(keystr).toString();
             this.serveurs.put(keystr, value);
         };
-        this.serveurs.put("test", "testval");
     }
     
-    public String toString()
-    {
-        String ret = "{"+"\"username\":\""+this.username+"\",\"password\":\""+this.password+"\",\"serveurs\":{";
-        int i=0;
-        for(String key : this.serveurs.keySet())
-        {
-            ret += "\""+key+"\":\""+this.serveurs.get(key)+"\"";
-            if(i!=this.serveurs.keySet().size()-1)
-                ret +=",";
-            i++;
-        }
-        ret += "}}";
-        return ret;
+    // public String toString()
+    // {
+    //     String ret = "{"+"\"username\":\""+this.username+"\",\"password\":\""+this.password+"\",\"serveurs\":{";
+    //     int i=0;
+    //     for(String key : this.serveurs.keySet())
+    //     {
+    //         ret += "\""+key+"\":\""+this.serveurs.get(key)+"\"";
+    //         if(i!=this.serveurs.keySet().size()-1)
+    //             ret +=",";
+    //         i++;
+    //     }
+    //     ret += "}}";
+    //     return ret;
+    // }
+
+    public JSONObject getUserJson() {
+        JSONObject obj = new JSONObject();
+        obj.put("username", this.username);
+        obj.put("password", this.password);
+        JSONObject serveurs = new JSONObject();
+        this.serveurs.forEach((k,v) -> {
+            serveurs.put(k,v);
+        });
+        obj.put("serveurs",serveurs);
+        return obj;
     }
 }

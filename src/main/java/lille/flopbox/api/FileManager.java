@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collection;
 
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -62,26 +61,25 @@ public class FileManager {
         return username;
     }
 
-    public static JSONArray getJsonFileContent(String filename)
+    public static JSONObject getJsonFileContent(String filename)
     {
         JSONObject content = new JSONObject();
         try {
-            content = (JSONObject) new JSONParser().parse(new FileReader(filename));
+            FileReader file = new FileReader(filename);
+            content = (JSONObject) new JSONParser().parse(file);
+            file.close();
         } catch (IOException | ParseException e) {
             throw new RuntimeException("getJsonFileContent : "+e.getMessage());
         }
-        return (JSONArray) content.get("users");
+        return (JSONObject) content;
     }
  
-    /***
-     * NOT WORKING
-     */
     public static void saveFileToJson()
     {
         File file = new File("users.json");
-        // file.deleteOnExit();
-        try (FileWriter f = new FileWriter(file)) {
-            f.write(UsersList.getInstance().toString());
+        try{
+            FileWriter f = new FileWriter(file);
+            f.write(UsersList.getInstance().getUsersJSON().toJSONString());
             f.flush();
             f.close();
         } catch (IOException e) {

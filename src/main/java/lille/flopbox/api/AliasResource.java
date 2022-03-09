@@ -1,7 +1,5 @@
 package lille.flopbox.api;
 
-import java.util.HashMap;
-
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
