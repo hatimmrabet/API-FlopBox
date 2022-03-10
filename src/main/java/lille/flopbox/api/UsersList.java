@@ -63,4 +63,16 @@ public class UsersList {
         }
         return builder.build();
     }
+
+    public boolean addUser(User newUser) {
+        if(this.users.containsKey(newUser.username))
+        {
+            return false;
+        }
+        else
+        {
+            this.users.put(newUser.username,newUser);
+            return true;
+        }
+    }
 }

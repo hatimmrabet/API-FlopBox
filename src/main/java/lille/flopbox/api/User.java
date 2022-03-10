@@ -14,6 +14,14 @@ public class User {
     String auth;
     HashMap<String, String> serveurs;
 
+    User(String username, String pass)
+    {
+        this.username = username;
+        this.password = pass;
+        this.auth = new String(Base64.getEncoder().encode((username+":"+password).getBytes()));
+        this.serveurs = new HashMap<String, String>();
+    }
+
     /**
      * Constructeur user a partir du objet json
      * @param json
