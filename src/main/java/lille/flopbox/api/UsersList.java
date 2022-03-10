@@ -1,10 +1,11 @@
 package lille.flopbox.api;
 
 import java.util.HashMap;
-import java.util.Set;
-import org.json.simple.JSONObject;
 
-@SuppressWarnings("unchecked")
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
+
 public class UsersList {
     
     private static UsersList instance = null;
@@ -12,13 +13,12 @@ public class UsersList {
     
     private UsersList()
     {
-        JSONObject jsonUsers = FileManager.getJsonFileContent("users.json");
+        JsonObject jsonUsers = FileManager.getJsonFileContent("users.json");
         this.users = new HashMap<>();
-        Set<String> keys = jsonUsers.keySet();
-        for(String key :  keys)
+        for(String key :  jsonUsers.keySet())
         {
-            User u = new User( (JSONObject) jsonUsers.get(key));
-            this.users.put(u.username, u);
+            User u = new User(jsonUsers.get(key).asJsonObject());
+            this.users.put(key, u);
         }
     }
 
@@ -41,32 +41,26 @@ public class UsersList {
         return this.users.get(username);
     }
 
+    /**
+     * recuperer les serveurs d'un utilisateurs
+     * @param username
+     * @return
+     */
     public HashMap<String,String> getServeursByUsername(String username)
     {
         return this.users.get(username).serveurs;
     }
-
-    // public String toString()
-    // {
-    //     String ret = "{ \"users\":[";
-    //     int i=0;
-    //     for(User u : UsersList.getInstance().getUsers().values())
-    //     {
-    //         ret += u.toString();
-    //         if(i!=UsersList.getInstance().getUsers().values().size())
-    //             ret += ",";
-    //         i++;
-    //     }
-    //     return ret+"]}";
-    // }
-
-    public JSONObject getUsersJSON()
+    
+    /**
+     * convertir la class UsersList a un object json qui contient des objet json de class User
+     * @return
+     */
+    public JsonObject getUsersJSON()
     {
-        JSONObject obj = new JSONObject();
-        for(User u : this.users.values())
-        {
-            obj.put(u.username, (JSONObject) u.getUserJson());
+        JsonObjectBuilder builder = Json.createObjectBuilder();
+        for(User u : this.users.values()){
+            builder.add(u.username, u.getUserJson());
         }
-        return obj;
+        return builder.build();
     }
 }

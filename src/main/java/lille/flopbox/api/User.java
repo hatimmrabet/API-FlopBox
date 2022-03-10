@@ -3,9 +3,10 @@ package lille.flopbox.api;
 import java.util.Base64;
 import java.util.HashMap;
 
-import org.json.simple.JSONObject;
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 
-@SuppressWarnings("unchecked")
 public class User {
 
     String username;
@@ -13,45 +14,38 @@ public class User {
     String auth;
     HashMap<String, String> serveurs;
 
-    User(JSONObject json)
+    /**
+     * Constructeur user a partir du objet json
+     * @param json
+     */
+    User(JsonObject json)
     {
-        this.username = json.get("username").toString();
-        this.password = json.get("password").toString();
+        this.username = json.getString("username");
+        this.password = json.getString("password");
         this.auth = new String(Base64.getEncoder().encode((username+":"+password).getBytes()));
         this.serveurs = new HashMap<String, String>();
-        JSONObject arr = (JSONObject) json.get("serveurs");
-        for(Object key : arr.keySet())
+        JsonObject arr = json.getJsonObject("serveurs");
+        for(String key : arr.keySet())
         {
-            String keystr = (String) key;
-            String value = arr.get(keystr).toString();
-            this.serveurs.put(keystr, value);
+            this.serveurs.put(key, arr.getString(key));
         };
     }
-    
-    // public String toString()
-    // {
-    //     String ret = "{"+"\"username\":\""+this.username+"\",\"password\":\""+this.password+"\",\"serveurs\":{";
-    //     int i=0;
-    //     for(String key : this.serveurs.keySet())
-    //     {
-    //         ret += "\""+key+"\":\""+this.serveurs.get(key)+"\"";
-    //         if(i!=this.serveurs.keySet().size()-1)
-    //             ret +=",";
-    //         i++;
-    //     }
-    //     ret += "}}";
-    //     return ret;
-    // }
 
-    public JSONObject getUserJson() {
-        JSONObject obj = new JSONObject();
-        obj.put("username", this.username);
-        obj.put("password", this.password);
-        JSONObject serveurs = new JSONObject();
-        this.serveurs.forEach((k,v) -> {
-            serveurs.put(k,v);
-        });
-        obj.put("serveurs",serveurs);
-        return obj;
+    /**
+     * convert User Class to JsonObject
+     * @return
+     */
+    public JsonObject getUserJson() {
+        JsonObjectBuilder builder = Json.createObjectBuilder();
+        builder.add("username", this.username);
+        builder.add("password", this.password);
+        JsonObjectBuilder servsBuilder = Json.createObjectBuilder();
+        for(String key : this.serveurs.keySet())
+        {
+            servsBuilder.add(key, this.serveurs.get(key));
+        }
+        JsonObject servs = servsBuilder.build();
+        builder.add("serveurs", servs);
+        return builder.build();
     }
 }

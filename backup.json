@@ -1,0 +1,20 @@
+{
+    "hatim": {
+        "password": "12345",
+        "serveurs": {
+            "test": "testval",
+            "alias": "hatim",
+            "url": "ftp.hatim"
+        },
+        "username": "hatim"
+    },
+    "admin": {
+        "password": "12345",
+        "serveurs": {
+            "test": "testval",
+            "admin url": "ftp.admin",
+            "alias": "hatim"
+        },
+        "username": "admin"
+    }
+}

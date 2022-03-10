@@ -1,33 +1,24 @@
 package lille.flopbox.api;
 
-import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.ArrayList;
+import java.io.FileOutputStream;
 import java.util.Base64;
 import java.util.Collection;
 
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
+import javax.json.JsonWriter;
 
 public class FileManager {
     
-    public static ArrayList<String> getFileContent(String filename) throws FileNotFoundException, IOException 
-    {
-        ArrayList<String> result = new ArrayList<String>();
-        try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
-            while (br.ready()) {
-                result.add(br.readLine());
-            }
-        }
-        return result;
-    }
-
+    /**
+     * Verifier si l'utilisateur peut se connecter
+     * @param authHeader
+     * @return
+     */
     public static boolean canAccess(String authHeader)
     {
         if(authHeader == null || authHeader.length() == 0)
@@ -52,6 +43,11 @@ public class FileManager {
         return false;
     }
 
+    /**
+     * extraire le username a partir du Token de basic authentification
+     * @param authHeader
+     * @return
+     */
     public static String getUsernameFromAuth(String authHeader)
     {
         String username;
@@ -61,29 +57,36 @@ public class FileManager {
         return username;
     }
 
-    public static JSONObject getJsonFileContent(String filename)
+    /**
+     * recuperer les donnees du fichier json sous format d'objet json
+     * @param filename
+     * @return
+     */
+    public static JsonObject getJsonFileContent(String filename)
     {
-        JSONObject content = new JSONObject();
-        try {
-            FileReader file = new FileReader(filename);
-            content = (JSONObject) new JSONParser().parse(file);
-            file.close();
-        } catch (IOException | ParseException e) {
-            throw new RuntimeException("getJsonFileContent : "+e.getMessage());
+        JsonObject content = Json.createObjectBuilder().build();
+        try{
+            JsonReader reader = Json.createReader(new FileInputStream(new File(filename)));
+            content = reader.readObject();
+            reader.close();
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException("FileNotFoundException "+e.getMessage());
         }
-        return (JSONObject) content;
+        return content;
     }
  
-    public static void saveFileToJson()
+    /**
+     * Sauvegarder les utilisateurs dans un fichier json "users.json"
+     * @param filename
+     */
+    public static void saveFileToJson(String filename)
     {
-        File file = new File("users.json");
         try{
-            FileWriter f = new FileWriter(file);
-            f.write(UsersList.getInstance().getUsersJSON().toJSONString());
-            f.flush();
-            f.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e.getMessage());
+            JsonWriter writer = Json.createWriter(new FileOutputStream(filename));
+            writer.writeObject(UsersList.getInstance().getUsersJSON());
+            writer.close();
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException("FileNotFoundException "+e.getMessage());
         }
     }
 }

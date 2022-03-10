@@ -1,6 +1,5 @@
 package lille.flopbox.api;
 
-import java.io.IOException;
 import java.util.Base64;
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -12,23 +11,14 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import org.json.simple.parser.ParseException;
 
 @Path("auth")
 public class AuthResource {
 
-    /**
-     * Se connecter à notre Platforme
-     * @param username username d'utilisateur du notre platforme
-     * @param password password d'utilisateur du notre platforme
-     * @return Token de connexion
-     * @throws ParseException
-     * @throws IOException
-     */
     @GET
     @Path("login")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response login(@HeaderParam("username") String username, @HeaderParam("password") String password) throws IOException, ParseException{
+    public Response login(@HeaderParam("username") String username, @HeaderParam("password") String password){
         String encoded = Base64.getEncoder().encodeToString((username+":"+password).getBytes());
         if(FileManager.canAccess(encoded))
         {
