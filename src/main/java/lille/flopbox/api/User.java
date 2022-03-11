@@ -12,9 +12,9 @@ public class User {
     String username;
     String password;
     String auth;
-    HashMap<String, String> serveurs;
+    public HashMap<String, String> serveurs;
 
-    User(String username, String pass)
+    public User(String username, String pass)
     {
         this.username = username;
         this.password = pass;

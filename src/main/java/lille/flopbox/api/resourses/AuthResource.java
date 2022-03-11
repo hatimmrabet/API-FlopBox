@@ -1,4 +1,4 @@
-package lille.flopbox.api;
+package lille.flopbox.api.resourses;
 
 import java.util.Base64;
 import javax.json.Json;
@@ -10,6 +10,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+
+import lille.flopbox.api.FileManager;
 
 
 @Path("auth")

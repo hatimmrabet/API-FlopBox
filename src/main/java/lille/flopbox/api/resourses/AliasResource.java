@@ -1,4 +1,4 @@
-package lille.flopbox.api;
+package lille.flopbox.api.resourses;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -8,6 +8,11 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+
+import lille.flopbox.api.FileManager;
+import lille.flopbox.api.User;
+import lille.flopbox.api.UsersList;
+import lille.flopbox.api.auth.Secured;
 
 @Path("alias")
 public class AliasResource {

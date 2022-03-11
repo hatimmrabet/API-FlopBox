@@ -1,4 +1,4 @@
-package lille.flopbox.api;
+package lille.flopbox.api.resourses;
 
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -10,6 +10,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+
+import lille.flopbox.api.User;
+import lille.flopbox.api.UsersList;
 
 @Path("users")
 public class UserResource {

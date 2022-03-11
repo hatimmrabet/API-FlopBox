@@ -1,4 +1,4 @@
-package lille.flopbox.api;
+package lille.flopbox.api.auth;
 
 import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.ElementType.TYPE;

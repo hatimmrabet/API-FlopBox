@@ -1,4 +1,4 @@
-package lille.flopbox.api;
+package lille.flopbox.api.auth;
 
 import java.io.IOException;
 
@@ -9,6 +9,8 @@ import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.ext.Provider;
+
+import lille.flopbox.api.FileManager;
 
 @Secured
 @Provider
