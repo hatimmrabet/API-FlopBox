@@ -48,6 +48,10 @@ public class User {
     {
         return this.serveurs;
     }
+    public void addServeur(String alias, String serveur)
+    {
+        this.serveurs.put(alias,serveur);
+    }
 
     public String getAuth()
     {
