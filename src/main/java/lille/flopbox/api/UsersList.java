@@ -48,7 +48,7 @@ public class UsersList {
      */
     public HashMap<String,String> getServeursByUsername(String username)
     {
-        return this.users.get(username).serveurs;
+        return this.users.get(username).getServeurs();
     }
     
     /**
@@ -59,7 +59,7 @@ public class UsersList {
     {
         JsonObjectBuilder builder = Json.createObjectBuilder();
         for(User u : this.users.values()){
-            builder.add(u.username, u.getUserJson());
+            builder.add(u.getUsername(), u.getUserJson());
         }
         return builder.build();
     }
@@ -70,13 +70,13 @@ public class UsersList {
      * @return true si l'utilisateur est ajoté false s'il existe déjà
      */
     public boolean addUser(User newUser) {
-        if(this.users.containsKey(newUser.username))
+        if(this.users.containsKey(newUser.getUsername()))
         {
             return false;
         }
         else
         {
-            this.users.put(newUser.username,newUser);
+            this.users.put(newUser.getUsername(),newUser);
             return true;
         }
     }

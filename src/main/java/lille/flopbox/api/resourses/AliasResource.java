@@ -34,7 +34,7 @@ public class AliasResource {
     {
         String username = FileManager.getUsernameFromAuth(authHeader);
         User u = UsersList.getInstance().getUserByUsername(username);
-        return Response.status(Status.OK).entity(u.serveurs.get(alias)).build();
+        return Response.status(Status.OK).entity(u.getServeurs().get(alias)).build();
     }
 
 }

@@ -9,10 +9,10 @@ import javax.json.JsonObjectBuilder;
 
 public class User {
 
-    String username;
-    String password;
-    String auth;
-    public HashMap<String, String> serveurs;
+    private String username;
+    private String password;
+    private String auth;
+    private HashMap<String, String> serveurs;
 
     public User(String username, String pass)
     {
@@ -37,6 +37,21 @@ public class User {
         {
             this.serveurs.put(key, arr.getString(key));
         };
+    }
+
+    public String getUsername()
+    {
+        return this.username;
+    }
+    
+    public HashMap<String, String> getServeurs()
+    {
+        return this.serveurs;
+    }
+
+    public String getAuth()
+    {
+        return this.auth;
     }
 
     /**

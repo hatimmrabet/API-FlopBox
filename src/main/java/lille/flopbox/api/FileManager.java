@@ -35,7 +35,7 @@ public class FileManager {
         users = UsersList.getInstance().getUsers().values();
         for(User u : users)
         {
-            if(u.auth.equals(auth))
+            if(u.getAuth().equals(auth))
             {
                 return true;
             }
