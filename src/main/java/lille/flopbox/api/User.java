@@ -41,7 +41,7 @@ public class User {
 
     /**
      * convert User Class to JsonObject
-     * @return
+     * @return JsonObject of user
      */
     public JsonObject getUserJson() {
         JsonObjectBuilder builder = Json.createObjectBuilder();

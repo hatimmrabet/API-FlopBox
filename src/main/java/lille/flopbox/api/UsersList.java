@@ -53,7 +53,7 @@ public class UsersList {
     
     /**
      * convertir la class UsersList a un object json qui contient des objet json de class User
-     * @return
+     * @return jsonObject de tous les utilisateurs
      */
     public JsonObject getUsersJSON()
     {
@@ -64,6 +64,11 @@ public class UsersList {
         return builder.build();
     }
 
+    /**
+     * Ajouté un utilisateur à la liste des utilisateurs
+     * @param newUser
+     * @return true si l'utilisateur est ajoté false s'il existe déjà
+     */
     public boolean addUser(User newUser) {
         if(this.users.containsKey(newUser.username))
         {
