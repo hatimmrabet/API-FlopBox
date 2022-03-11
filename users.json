@@ -1,18 +1,1 @@
-{
-  "toto": { "username": "toto", "password": "hatim", "serveurs": {} },
-  "test": { "username": "test", "password": "dffdf", "serveurs": {} },
-  "hatim": {
-    "username": "hatim",
-    "password": "12345",
-    "serveurs": { "test": "testval", "alias": "hatim", "url": "ftp.hatim" }
-  },
-  "admin": {
-    "username": "admin",
-    "password": "12345",
-    "serveurs": {
-      "test": "testval",
-      "admin url": "ftp.admin",
-      "alias": "hatim"
-    }
-  }
-}
+{"toto":{"username":"toto","password":"hatim","serveurs":{}},"test2":{"username":"test2","password":"dffdf","serveurs":{}},"test":{"username":"test","password":"dffdf","serveurs":{}},"hatim":{"username":"hatim","password":"12345","serveurs":{"test":"testval","alias":"hatim","url":"ftp.hatim"}},"admin":{"username":"admin","password":"12345","serveurs":{"test":"testval","admin url":"ftp.admin","alias":"hatim"}}}
