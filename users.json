@@ -1,1 +1,1 @@
-{"hatim":{"username":"hatim","password":"12345","serveurs":{"test":"testval","alias":"hatim","url":"ftp.hatim"}},"admin":{"username":"admin","password":"12345","serveurs":{"test":"testval","admin url":"ftp.admin","alias":"hatim"}}}
+{"hatim":{"username":"hatim","password":"12345","serveurs":{"test":"testval","ubuntu":"ftp.ubuntu.com","alias":"hatim","url":"ftp.hatim"}},"admin":{"username":"admin","password":"12345","serveurs":{"test":"testval","admin url":"ftp.admin","alias":"hatim"}}}
