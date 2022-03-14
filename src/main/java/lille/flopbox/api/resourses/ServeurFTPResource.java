@@ -120,6 +120,15 @@ public class ServeurFTPResource {
         return ret.build();
     }
 
+    /**
+     * Creation d'un dossier.
+     * @param authHeader
+     * @param alias
+     * @param username
+     * @param password
+     * @param path
+     * @return
+     */
     @POST
     @Secured
     @Path("mkdir/{path: .*}")
@@ -169,7 +178,15 @@ public class ServeurFTPResource {
         }
     }
 
-
+    /**
+     * supprimer un dossier.
+     * @param authHeader
+     * @param alias
+     * @param username
+     * @param password
+     * @param path
+     * @return
+     */
     @DELETE
     @Secured
     @Path("rmd/{path: .*}")
@@ -219,6 +236,12 @@ public class ServeurFTPResource {
         }
     }
 
+    /**
+     * Fonction de suppression des dossiers et des fichiers.
+     * @param ftp
+     * @param path
+     * @return
+     */
     public boolean deleteFilesDirectories(FTPClient ftp, String path)
     {
         try {
