@@ -30,61 +30,13 @@ import lille.flopbox.api.auth.Secured;
 public class ServeurFTPResource {
 
     /**
-     * endpoint pour se connecter
-     * 
+     * Lister tous les dossiers du repertoire courant.
      * @param authHeader
      * @param alias
      * @param username
      * @param password
-     * @return
+     * @return reponse json avec le details de chaque fichier.
      */
-    @GET
-    @Secured
-    @Path("login")
-    public Response login(@HeaderParam("Authorization") String authHeader,
-            @PathParam("alias") String alias,
-            @HeaderParam("username") String username,
-            @HeaderParam("password") String password) {
-
-        if (username == null || password == null)
-            return Response.status(Status.BAD_REQUEST).entity("Missing Headers.").build();
-
-        User u = UsersList.getInstance().getUserByUsername(FileManager.getUsernameFromAuth(authHeader));
-        String serveur = u.getServeurs().get(alias);
-
-        if (serveur == null)
-            return Response.status(Status.NOT_FOUND).entity("Alias '" + alias + "' not found.").build();
-
-        FTPClient ftp = new FTPClient();
-
-        try {
-            ftp.connect(serveur);
-            System.out.println("Connected to " + serveur + ".");
-            System.out.print(ftp.getReplyString());
-            // Verifier connection au serveur
-            if (!FTPReply.isPositiveCompletion(ftp.getReplyCode())) {
-                ftp.disconnect();
-                return Response.status(Status.BAD_REQUEST).entity("Connection to server Failsed").build();
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e.getMessage());
-        }
-
-        // connection
-        try {
-            if (ftp.login(username, password)) {
-                ftp.logout();
-                ftp.disconnect();
-                return Response.status(Status.OK).entity("Connected").build();
-            } else {
-                ftp.disconnect();
-                return Response.status(Status.BAD_REQUEST).entity("Username ou mot de passe sont incorrectes.").build();
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e.getMessage());
-        }
-    }
-
     @GET
     @Secured
     @Path("list")
@@ -92,15 +44,22 @@ public class ServeurFTPResource {
     public Response cmdList(@HeaderParam("Authorization") String authHeader,
             @PathParam("alias") String alias,
             @HeaderParam("username") String username,
-            @HeaderParam("password") String password,
-            @PathParam("path") String path)
-    {
-        return cmdListWithPath(authHeader, alias, username, password, path);
+            @HeaderParam("password") String password) {
+        return cmdListWithPath(authHeader, alias, username, password, "");
     }
 
+    /**
+     * Lister tous les fichiers contenues dans un Path.
+     * @param authHeader
+     * @param alias
+     * @param username
+     * @param password
+     * @param path le path des fichiers à lister
+     * @return reponse json avec le details de chaque fichier.
+     */
     @GET
     @Secured
-    @Path("list/{path}")
+    @Path("list/{path: .*}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response cmdListWithPath(@HeaderParam("Authorization") String authHeader,
             @PathParam("alias") String alias,
@@ -117,6 +76,9 @@ public class ServeurFTPResource {
         if (serveur == null)
             return Response.status(Status.NOT_FOUND).entity("Alias '" + alias + "' not found.").build();
 
+        if(path.equals(""))
+            path = ".";
+
         FTPClient ftp = new FTPClient();
         try {
             ftp.connect(serveur);
@@ -125,35 +87,42 @@ public class ServeurFTPResource {
                 ftp.disconnect();
                 return Response.status(Status.BAD_REQUEST).entity("Connection to server Failsed").build();
             }
-            ftp.enterLocalPassiveMode();    //entering passive mode
+            // entering passive mode
+            ftp.enterLocalPassiveMode(); 
             // connection
-            if (!ftp.login(username,password)) {
+            if (!ftp.login(username, password))
+            {
+                ftp.disconnect();
                 return Response.status(Status.BAD_REQUEST).entity("Username ou mot de passe sont incorrectes.").build();
             }
-            //recuperation des noms des fichiers
-            FTPFile[] fichiers = ftp.listFiles(path);
+            // verifier le path
+            if(!ftp.changeWorkingDirectory(path))
+            {
+                ftp.disconnect();
+                return Response.status(Status.NOT_FOUND).entity("The path : "+path+" is not a directory.").build();
+            }
+            // recuperation des noms des fichiers
+            FTPFile[] fichiers = ftp.listFiles();
             ftp.logout();
             ftp.disconnect();
             return Response.status(Status.OK).entity(getFilesDetails(fichiers)).build();
         } catch (IOException e) {
-            throw new RuntimeException("cmdList : "+e.getMessage());
+            throw new RuntimeException("cmdList : " + e.getMessage());
         }
     }
-    
+
     public JsonArray getFilesDetails(FTPFile[] files) {
         DateFormat dateFormater = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         JsonArrayBuilder ret = Json.createArrayBuilder();
         for (FTPFile file : files) {
             JsonObjectBuilder jsb = Json.createObjectBuilder();
             jsb.add("name", file.getName());
-            jsb.add("size",file.getSize());
+            jsb.add("size", file.getSize());
             jsb.add("date", dateFormater.format(file.getTimestamp().getTime()));
             ret.add(jsb.build());
         }
         return ret.build();
     }
-
-
 
 
 
