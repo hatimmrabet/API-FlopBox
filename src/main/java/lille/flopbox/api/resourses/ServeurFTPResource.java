@@ -1,8 +1,10 @@
 package lille.flopbox.api.resourses;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -406,6 +408,68 @@ public class ServeurFTPResource {
         }
     }
 
+    @POST
+    @Secured
+    @Path("uploadFile/{path: .*}")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response cmdUploadFile(@HeaderParam("Authorization") String authHeader,
+            @PathParam("alias") String alias,
+            @HeaderParam("username") String username,
+            @HeaderParam("password") String password,
+            @PathParam("path") String path,
+            @FormParam("file") String fileToUpload) {
+        if (username == null || password == null)
+            return Response.status(Status.BAD_REQUEST).entity("Missing Headers.").build();
+        if (path == null)
+            return Response.status(Status.BAD_REQUEST).entity("Missing path.").build();
+        if(fileToUpload == null)
+            return Response.status(Status.BAD_REQUEST).entity("Missing file.").build();
+        if (path.equals(""))
+            path = ".";
 
+        User u = UsersList.getInstance().getUserByUsername(FileManager.getUsernameFromAuth(authHeader));
+        String serveur = u.getServeurs().get(alias);
+            
+        if (serveur == null)
+            return Response.status(Status.NOT_FOUND).entity("Alias '" + alias + "' not found.").build();
+
+        FTPClient ftp = new FTPClient();
+        try {
+            ftp.setControlEncoding("UTF-8");
+            ftp.connect(serveur);
+            // Verifier connection au serveur
+            if (!FTPReply.isPositiveCompletion(ftp.getReplyCode())) {
+                ftp.disconnect();
+                return Response.status(Status.BAD_REQUEST).entity("Connection to server Failed").build();
+            }
+            // entering passive mode
+            ftp.enterLocalPassiveMode();
+            // connection
+            if (!ftp.login(username, password)) {
+                ftp.disconnect();
+                return Response.status(Status.BAD_REQUEST).entity("Username ou mot de passe sont incorrectes.").build();
+            }
+            // set files type
+            ftp.setFileType(FTPClient.BINARY_FILE_TYPE);
+            // download du fichiers dans le dossier downloads
+            System.out.println(fileToUpload);
+            File firstLocalFile = new File(fileToUpload);
+            String firstRemoteFile = "downloads/"+fileToUpload;
+            InputStream inputStream = new FileInputStream(firstLocalFile);
+            System.out.println("Start uploading first file");
+            boolean done = ftp.storeFile(firstRemoteFile, inputStream);
+            inputStream.close();
+            if (done) {
+                System.out.println("The first file is uploaded successfully.");
+            }
+            //deconnection du serveur
+            ftp.logout();
+            ftp.disconnect();
+            return Response.status(200).entity("File downloaded successfully.").build();
+        } catch (IOException e) {
+            throw new RuntimeException("cmdRenf : " + e.getMessage());
+        }
+    }
 }
 
