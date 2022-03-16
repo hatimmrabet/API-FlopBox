@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite tests="1" failures="0" name="lille.flopbox.api.MyResourceTest" time="1.19" errors="1" skipped="0">
+<testsuite tests="1" failures="0" name="lille.flopbox.api.MyResourceTest" time="1.176" errors="1" skipped="0">
   <properties>
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
     <property name="java.vm.version" value="17.0.1+12-LTS-39"/>
@@ -61,7 +61,7 @@
     <property name="sun.stdout.encoding" value="cp850"/>
     <property name="sun.cpu.isalist" value="amd64"/>
   </properties>
-  <testcase classname="lille.flopbox.api.MyResourceTest" name="testGetIt" time="1.19">
+  <testcase classname="lille.flopbox.api.MyResourceTest" name="testGetIt" time="1.176">
     <error message="HTTP 404 Not Found" type="javax.ws.rs.NotFoundException">javax.ws.rs.NotFoundException: HTTP 404 Not Found
 	at org.glassfish.jersey.client.JerseyInvocation.convertToException(JerseyInvocation.java:948)
 	at org.glassfish.jersey.client.JerseyInvocation.translate(JerseyInvocation.java:755)
@@ -109,17 +109,17 @@
 	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:115)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:75)
 </error>
-    <system-err>mars 11, 2022 8:58:32 AM org.glassfish.jersey.message.internal.MessagingBinders$EnabledProvidersBinder bindToBinder
+    <system-err>mars 16, 2022 12:39:10 PM org.glassfish.jersey.message.internal.MessagingBinders$EnabledProvidersBinder bindToBinder
 WARNING: A class javax.activation.DataSource for a default provider MessageBodyWriter&lt;javax.activation.DataSource&gt; was not found. The provider is not available.
-mars 11, 2022 8:58:32 AM org.glassfish.jersey.server.wadl.WadlFeature configure
+mars 16, 2022 12:39:10 PM org.glassfish.jersey.server.wadl.WadlFeature configure
 WARNING: JAX-B API not found . WADL feature is disabled.
-mars 11, 2022 8:58:32 AM org.glassfish.grizzly.http.server.NetworkListener start
+mars 16, 2022 12:39:10 PM org.glassfish.grizzly.http.server.NetworkListener start
 INFO: Started listener bound to [localhost:8080]
-mars 11, 2022 8:58:32 AM org.glassfish.grizzly.http.server.HttpServer start
+mars 16, 2022 12:39:10 PM org.glassfish.grizzly.http.server.HttpServer start
 INFO: [HttpServer] Started.
-mars 11, 2022 8:58:32 AM org.glassfish.jersey.message.internal.MessagingBinders$EnabledProvidersBinder bindToBinder
+mars 16, 2022 12:39:10 PM org.glassfish.jersey.message.internal.MessagingBinders$EnabledProvidersBinder bindToBinder
 WARNING: A class javax.activation.DataSource for a default provider MessageBodyWriter&lt;javax.activation.DataSource&gt; was not found. The provider is not available.
-mars 11, 2022 8:58:33 AM org.glassfish.grizzly.http.server.NetworkListener shutdownNow
+mars 16, 2022 12:39:11 PM org.glassfish.grizzly.http.server.NetworkListener shutdownNow
 INFO: Stopped listener bound to [localhost:8080]
 </system-err>
   </testcase>

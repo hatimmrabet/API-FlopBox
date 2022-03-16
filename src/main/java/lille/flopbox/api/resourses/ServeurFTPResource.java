@@ -174,7 +174,7 @@ public class ServeurFTPResource {
             ftp.disconnect();
             return Response.status(Status.CREATED).entity("Directory created.").build();
         } catch (IOException e) {
-            throw new RuntimeException("cmdList : " + e.getMessage());
+            throw new RuntimeException("cmdmkdir : " + e.getMessage());
         }
     }
 
@@ -232,7 +232,7 @@ public class ServeurFTPResource {
             ftp.disconnect();
             return Response.status(Status.OK).entity("Directory deleted.").build();
         } catch (IOException e) {
-            throw new RuntimeException("cmdList : " + e.getMessage());
+            throw new RuntimeException("cmdRmd : " + e.getMessage());
         }
     }
 
@@ -263,4 +263,82 @@ public class ServeurFTPResource {
         return true;
     }
 
+    /**
+     * rename a folder or a file.
+     * @param authHeader
+     * @param alias
+     * @param username
+     * @param password
+     * @param path the Path to parrent directory.
+     * @param oldfilename the file name to change.
+     * @param newfilename the name to give.
+     * @return
+     */
+    @PUT
+    @Secured
+    @Path("rename/{path: .*}")
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response cmdRENF(@HeaderParam("Authorization") String authHeader,
+            @PathParam("alias") String alias,
+            @HeaderParam("username") String username,
+            @HeaderParam("password") String password,
+            @PathParam("path") String path ,
+            @FormParam("oldname") String oldfilename,
+            @FormParam("newname") String newfilename) {
+
+        if (username == null || password == null)
+            return Response.status(Status.BAD_REQUEST).entity("Missing Headers.").build();
+        if (path == null)
+            return Response.status(Status.BAD_REQUEST).entity("Missing path.").build();
+        if (oldfilename == null || newfilename == null)
+            return Response.status(Status.BAD_REQUEST).entity("Missing Form params.").build();
+            
+        User u = UsersList.getInstance().getUserByUsername(FileManager.getUsernameFromAuth(authHeader));
+        String serveur = u.getServeurs().get(alias);
+        if (path.equals(""))
+            path = ".";
+            
+        if (serveur == null)
+            return Response.status(Status.NOT_FOUND).entity("Alias '" + alias + "' not found.").build();
+
+        FTPClient ftp = new FTPClient();
+        try {
+            ftp.connect(serveur);
+            // Verifier connection au serveur
+            if (!FTPReply.isPositiveCompletion(ftp.getReplyCode())) {
+                ftp.disconnect();
+                return Response.status(Status.BAD_REQUEST).entity("Connection to server Failed").build();
+            }
+            // entering passive mode
+            ftp.enterLocalPassiveMode();
+            // connection
+            if (!ftp.login(username, password)) {
+                ftp.disconnect();
+                return Response.status(Status.BAD_REQUEST).entity("Username ou mot de passe sont incorrectes.").build();
+            }
+            // change directory to path
+            if(!ftp.changeWorkingDirectory(path))
+            {
+                ftp.logout();
+                ftp.disconnect();
+                return Response.status(Status.BAD_REQUEST).entity("The path "+path+" not found.").build();
+            }
+            // renomer fichier
+            if (!ftp.rename(oldfilename,newfilename)) {
+                ftp.logout();
+                ftp.disconnect();
+                return Response.status(Status.BAD_REQUEST).entity("Rename failed.").build();
+            }
+            ftp.logout();
+            ftp.disconnect();
+            return Response.status(200).entity("Resource updated successfully.").build();
+        } catch (IOException e) {
+            throw new RuntimeException("cmdRenf : " + e.getMessage());
+        }
+    }
+
+    
+
 }
+

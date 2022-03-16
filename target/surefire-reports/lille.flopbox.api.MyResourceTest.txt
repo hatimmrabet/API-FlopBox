@@ -1,8 +1,8 @@
 -------------------------------------------------------------------------------
 Test set: lille.flopbox.api.MyResourceTest
 -------------------------------------------------------------------------------
-Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 1.245 sec <<< FAILURE!
-testGetIt(lille.flopbox.api.MyResourceTest)  Time elapsed: 1.19 sec  <<< ERROR!
+Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 1.235 sec <<< FAILURE!
+testGetIt(lille.flopbox.api.MyResourceTest)  Time elapsed: 1.176 sec  <<< ERROR!
 javax.ws.rs.NotFoundException: HTTP 404 Not Found
 	at org.glassfish.jersey.client.JerseyInvocation.convertToException(JerseyInvocation.java:948)
 	at org.glassfish.jersey.client.JerseyInvocation.translate(JerseyInvocation.java:755)
