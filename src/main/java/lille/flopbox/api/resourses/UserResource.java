@@ -1,7 +1,5 @@
 package lille.flopbox.api.resourses;
 
-import javax.json.Json;
-import javax.json.JsonObject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
@@ -16,18 +14,22 @@ import lille.flopbox.api.UsersList;
 
 @Path("users")
 public class UserResource {
-    
+
+    /**
+     * Creation d'un nouveau utilisateur
+     * 
+     * @param username : username d'utilisateur
+     * @param password : le mot de passe pour se connecter à la platforme
+     * @return une Reponse 201 s'il est crée, 400 sinon.
+     */
     @POST
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createNewUser(@FormParam("username") String username, @FormParam("password") String password)
-    {
+    public Response createNewUser(@FormParam("username") String username, @FormParam("password") String password) {
         User newUser = new User(username, password);
-        if(UsersList.getInstance().addUser(newUser))
-        {
+        if (UsersList.getInstance().addUser(newUser)) {
             return Response.status(Status.CREATED).entity(newUser.getUserJson()).build();
         }
-        JsonObject error_msg = Json.createObjectBuilder().add("error","username exist already.").build();
-        return Response.status(406).entity(error_msg).build();
+        return Response.status(Status.BAD_REQUEST).entity("username exist already.").build();
     }
 }

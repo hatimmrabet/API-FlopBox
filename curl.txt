@@ -1,5 +1,1 @@
-curl -X POST -H "Authorization: Basic aGF0aW06MTIzNDU=" \
- -H "username: mrabetelkhom" \
-  -H "password: Hatimtim123" \
-   -F "file=@/home/m1ml/mrabetelkhom/Desktop/BDR" \
-   http://localhost:8080/lille/uploadFile/
+curl -X POST -H "Authorization: Basic aGF0aW06MTIzNDU=" -H "username: mrabetelkhom" -H "password: Hatimtim123" -F "file=@D:\Bureau\caf Manal\RIB.pdf" http://localhost:8080/lille/uploadFile/

@@ -14,52 +14,76 @@ public class User {
     private String auth;
     private HashMap<String, String> serveurs;
 
-    public User(String username, String pass)
-    {
+    /**
+     * Creation d'un User
+     * 
+     * @param username : username de l'utilisateur
+     * @param pass     : le mot de passe de l'utilisateur
+     */
+    public User(String username, String pass) {
         this.username = username;
         this.password = pass;
-        this.auth = new String(Base64.getEncoder().encode((username+":"+password).getBytes()));
+        this.auth = new String(Base64.getEncoder().encode((username + ":" + password).getBytes()));
         this.serveurs = new HashMap<String, String>();
     }
 
     /**
-     * Constructeur user a partir du objet json
-     * @param json
+     * Construire un User à partir du objet json.
+     * 
+     * @param json : objet Json represantant l'utilisateur.
      */
-    User(JsonObject json)
-    {
+    User(JsonObject json) {
         this.username = json.getString("username");
         this.password = json.getString("password");
-        this.auth = new String(Base64.getEncoder().encode((username+":"+password).getBytes()));
+        this.auth = new String(Base64.getEncoder().encode((username + ":" + password).getBytes()));
         this.serveurs = new HashMap<String, String>();
         JsonObject arr = json.getJsonObject("serveurs");
-        for(String key : arr.keySet())
-        {
+        for (String key : arr.keySet()) {
             this.serveurs.put(key, arr.getString(key));
-        };
+        }
+        ;
     }
 
-    public String getUsername()
-    {
+    /**
+     * Recuperer le username d'utilisateur
+     * 
+     * @return le username de User
+     */
+    public String getUsername() {
         return this.username;
     }
-    
-    public HashMap<String, String> getServeurs()
-    {
+
+    /**
+     * Recuperer la liste des serveurs
+     * 
+     * @return la liste des serveurs
+     */
+    public HashMap<String, String> getServeurs() {
         return this.serveurs;
     }
-    public void addServeur(String alias, String serveur)
-    {
-        this.serveurs.put(alias,serveur);
+
+    /**
+     * Ajouter un nouveau serveur
+     * 
+     * @param alias   : nom personnalisé du serveur
+     * @param serveur : adresse URL du serveur
+     */
+    public void addServeur(String alias, String serveur) {
+        this.serveurs.put(alias, serveur);
     }
 
-    public String getAuth()
-    {
+    /**
+     * L'authentification de l'utilisateur
+     * 
+     * @return Token d'authentification
+     */
+    public String getAuth() {
         return this.auth;
     }
 
     /**
      * convert User Class to JsonObject
+     * 
      * @return JsonObject of user
      */
     public JsonObject getUserJson() {
@@ -67,8 +91,7 @@ public class User {
         builder.add("username", this.username);
         builder.add("password", this.password);
         JsonObjectBuilder servsBuilder = Json.createObjectBuilder();
-        for(String key : this.serveurs.keySet())
-        {
+        for (String key : this.serveurs.keySet()) {
             servsBuilder.add(key, this.serveurs.get(key));
         }
         JsonObject servs = servsBuilder.build();
