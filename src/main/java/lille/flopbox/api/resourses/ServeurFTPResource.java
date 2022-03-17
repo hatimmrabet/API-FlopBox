@@ -35,27 +35,7 @@ import lille.flopbox.api.auth.Secured;
 public class ServeurFTPResource {
 
     /**
-     * Lister tous les dossiers du repertoire courant.
-     * 
-     * @param authHeader : Token d'authentification
-     * @param alias      : alias du serveur
-     * @param username   : nom d'utilisateur
-     * @param password   : mot de passe d'utilisateur
-     * @return reponse json avec le details de chaque fichier.
-     */
-    @GET
-    @Secured
-    @Path("list")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response cmdList(@HeaderParam("Authorization") String authHeader,
-            @PathParam("alias") String alias,
-            @HeaderParam("username") String username,
-            @HeaderParam("password") String password) {
-        return cmdListWithPath(authHeader, alias, username, password, "");
-    }
-
-    /**
-     * Lister tous les fichiers contenues dans un Path.
+     * Lister tous les fichiers contenus dans un Path.
      * 
      * @param authHeader : Token d'authentification
      * @param alias      : alias du serveur
@@ -66,9 +46,9 @@ public class ServeurFTPResource {
      */
     @GET
     @Secured
-    @Path("list/{path: .*}")
+    @Path("list{path: (/.*)?}")
     @Produces({ MediaType.APPLICATION_JSON, MediaType.TEXT_HTML })
-    public Response cmdListWithPath(@HeaderParam("Authorization") String authHeader,
+    public Response listFiles(@HeaderParam("Authorization") String authHeader,
             @PathParam("alias") String alias,
             @HeaderParam("username") String username,
             @HeaderParam("password") String password,
@@ -149,7 +129,7 @@ public class ServeurFTPResource {
     @Secured
     @Path("mkdir/{path: .*}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response cmdMkdir(@HeaderParam("Authorization") String authHeader,
+    public Response makeDirectory(@HeaderParam("Authorization") String authHeader,
             @PathParam("alias") String alias,
             @HeaderParam("username") String username,
             @HeaderParam("password") String password,
@@ -206,9 +186,9 @@ public class ServeurFTPResource {
      */
     @DELETE
     @Secured
-    @Path("rmd/{path: .*}")
+    @Path("remove/{path: .*}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response cmdRmd(@HeaderParam("Authorization") String authHeader,
+    public Response removeFile(@HeaderParam("Authorization") String authHeader,
             @PathParam("alias") String alias,
             @HeaderParam("username") String username,
             @HeaderParam("password") String password,
@@ -296,7 +276,7 @@ public class ServeurFTPResource {
     @Path("rename/{path: .*}")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response cmdRENF(@HeaderParam("Authorization") String authHeader,
+    public Response renameFile(@HeaderParam("Authorization") String authHeader,
             @PathParam("alias") String alias,
             @HeaderParam("username") String username,
             @HeaderParam("password") String password,
@@ -368,7 +348,7 @@ public class ServeurFTPResource {
     @Secured
     @Path("getFile/{path: .*}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response cmdGetFile(@HeaderParam("Authorization") String authHeader,
+    public Response downloadFile(@HeaderParam("Authorization") String authHeader,
             @PathParam("alias") String alias,
             @HeaderParam("username") String username,
             @HeaderParam("password") String password,
@@ -440,7 +420,7 @@ public class ServeurFTPResource {
     @Secured
     @Path("getDirectory/{path: .*}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response cmdGetDirectory(@HeaderParam("Authorization") String authHeader,
+    public Response downloadDirectory(@HeaderParam("Authorization") String authHeader,
             @PathParam("alias") String alias,
             @HeaderParam("username") String username,
             @HeaderParam("password") String password,
@@ -550,7 +530,7 @@ public class ServeurFTPResource {
     @Path("uploadFile/{path: .*}")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response cmdUploadFile(@HeaderParam("Authorization") String authHeader,
+    public Response uploadFile(@HeaderParam("Authorization") String authHeader,
             @PathParam("alias") String alias,
             @HeaderParam("username") String username,
             @HeaderParam("password") String password,
