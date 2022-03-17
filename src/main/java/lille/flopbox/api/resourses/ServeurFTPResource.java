@@ -1,7 +1,6 @@
 package lille.flopbox.api.resourses;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,6 +20,8 @@ import javax.ws.rs.core.Response.Status;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPReply;
+import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
+import org.glassfish.jersey.media.multipart.FormDataParam;
 
 import lille.flopbox.api.FileManager;
 import lille.flopbox.api.User;
@@ -506,20 +507,21 @@ public class ServeurFTPResource {
     @POST
     @Secured
     @Path("uploadFile/{path: .*}")
-    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
     public Response cmdUploadFile(@HeaderParam("Authorization") String authHeader,
             @PathParam("alias") String alias,
             @HeaderParam("username") String username,
             @HeaderParam("password") String password,
             @PathParam("path") String path,
-            @FormParam("file") String fileToUpload)
+            @FormDataParam("file") InputStream uploadedInputStream,  
+            @FormDataParam("file") FormDataContentDisposition fileDetail)
         {
         if (username == null || password == null)
             return Response.status(Status.BAD_REQUEST).entity("Missing Headers.").build();
         if (path == null)
             return Response.status(Status.BAD_REQUEST).entity("Missing path.").build();
-        if(fileToUpload == null)
+        if(fileDetail.getFileName().equals(""))
             return Response.status(Status.BAD_REQUEST).entity("Missing file.").build();
         if (path.equals(""))
             path = ".";
@@ -555,13 +557,11 @@ public class ServeurFTPResource {
                 ftp.disconnect();
                 return Response.status(Status.BAD_REQUEST).entity("The path "+path+" not found.").build();
             }
-            // chercher le fichier
-            File file = new File(fileToUpload);
-            InputStream inputStream = new FileInputStream(fileToUpload);
-            if (ftp.storeFile(file.getName(), inputStream)) {
-                inputStream.close();
+            // uploader le fichier
+            if (ftp.storeFile(fileDetail.getFileName(), uploadedInputStream)) {
+                uploadedInputStream.close();
             } else {
-                inputStream.close();
+                uploadedInputStream.close();
                 return Response.status(Status.BAD_REQUEST).entity("File upload failed.").build();
             }
             //deconnection du serveur
@@ -572,5 +572,7 @@ public class ServeurFTPResource {
             return Response.status(Status.BAD_REQUEST).entity("Exception : "+ e.getMessage()).build();
         }
     }
-}
 
+
+    
+}
