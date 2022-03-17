@@ -408,6 +408,101 @@ public class ServeurFTPResource {
         }
     }
 
+    @GET
+    @Secured
+    @Path("getDirectory/{path: .*}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response cmdGetDirectory(@HeaderParam("Authorization") String authHeader,
+            @PathParam("alias") String alias,
+            @HeaderParam("username") String username,
+            @HeaderParam("password") String password,
+            @PathParam("path") String path) {
+
+        if (username == null || password == null)
+            return Response.status(Status.BAD_REQUEST).entity("Missing Headers.").build();
+        if (path == null)
+            return Response.status(Status.BAD_REQUEST).entity("Missing path.").build();
+        if (path.equals(""))
+            path = ".";
+
+        User u = UsersList.getInstance().getUserByUsername(FileManager.getUsernameFromAuth(authHeader));
+        String serveur = u.getServeurs().get(alias);
+            
+        if (serveur == null)
+            return Response.status(Status.NOT_FOUND).entity("Alias '" + alias + "' not found.").build();
+
+        FTPClient ftp = new FTPClient();
+        try {
+            ftp.setControlEncoding("UTF-8");
+            ftp.connect(serveur);
+            // Verifier connection au serveur
+            if (!FTPReply.isPositiveCompletion(ftp.getReplyCode())) {
+                ftp.disconnect();
+                return Response.status(Status.BAD_REQUEST).entity("Connection to server Failed").build();
+            }
+            // entering passive mode
+            ftp.enterLocalPassiveMode();
+            // connection
+            if (!ftp.login(username, password)) {
+                ftp.disconnect();
+                return Response.status(Status.BAD_REQUEST).entity("Username ou mot de passe sont incorrectes.").build();
+            }
+            // set files type
+            ftp.setFileType(FTPClient.BINARY_FILE_TYPE);
+            // verification si c'est un dossier
+            if(!ftp.changeWorkingDirectory(path))
+            {
+                ftp.logout();
+                ftp.disconnect();
+                return Response.status(Status.BAD_REQUEST).entity("The path "+path+" not found.").build();
+            }
+            String pathParts[] = path.split("/");
+            String filename = pathParts[pathParts.length -1 ];
+            File dossier = new File("downloads/"+filename);
+            dossier.mkdir();
+            if(!getFilesDirectories(ftp, ftp.printWorkingDirectory()))
+            {
+                ftp.logout();
+                ftp.disconnect();
+                return Response.status(Status.BAD_REQUEST).entity("Download Directory failed.").build();
+            }
+            ftp.logout();
+            ftp.disconnect();
+            return Response.status(200).entity("File downloaded successfully.").build();
+        } catch (IOException e) {
+            return Response.status(Status.BAD_REQUEST).entity("Exception : "+ e.getMessage()).build();
+        }
+    }
+
+    public boolean getFilesDirectories(FTPClient ftp, String path)
+    {
+        try {
+            FTPFile[] files = ftp.listFiles(path);
+            for(FTPFile file : files)
+            {
+                if(file.isDirectory()) {
+                    File dossier = new File("downloads/"+path+"/"+file.getName());
+                    dossier.mkdir();
+                    getFilesDirectories(ftp, path+"/"+file.getName());
+                } else {
+                    OutputStream output = new FileOutputStream("downloads"+path+"/"+file.getName());
+                    if(!ftp.retrieveFile(path+"/"+file.getName(),output))
+                    {
+                        output.close();
+                        File localfile = new File("downloads/"+path+"/"+file.getName());
+                        localfile.delete();
+                        return false;
+                    }
+                    output.close();
+                }
+            }
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
+        return true;
+    }
+
     @POST
     @Secured
     @Path("uploadFile/{path: .*}")
