@@ -108,7 +108,7 @@ public class ServeurFTPResource {
             ftp.disconnect();
             return Response.status(Status.OK).entity(getFilesDetails(fichiers)).build();
         } catch (IOException e) {
-            throw new RuntimeException("cmdList : " + e.getMessage());
+            return Response.status(Status.BAD_REQUEST).entity("Exception : "+ e.getMessage()).build();
         }
     }
 
@@ -179,7 +179,7 @@ public class ServeurFTPResource {
             ftp.disconnect();
             return Response.status(Status.CREATED).entity("Directory created.").build();
         } catch (IOException e) {
-            throw new RuntimeException("cmdmkdir : " + e.getMessage());
+            return Response.status(Status.BAD_REQUEST).entity("Exception : "+ e.getMessage()).build();
         }
     }
 
@@ -237,7 +237,7 @@ public class ServeurFTPResource {
             ftp.disconnect();
             return Response.status(Status.OK).entity("Directory deleted.").build();
         } catch (IOException e) {
-            throw new RuntimeException("cmdRmd : " + e.getMessage());
+            return Response.status(Status.BAD_REQUEST).entity("Exception : "+ e.getMessage()).build();
         }
     }
 
@@ -339,7 +339,7 @@ public class ServeurFTPResource {
             ftp.disconnect();
             return Response.status(200).entity("Resource updated successfully.").build();
         } catch (IOException e) {
-            throw new RuntimeException("cmdRenf : " + e.getMessage());
+            return Response.status(Status.BAD_REQUEST).entity("Exception : "+ e.getMessage()).build();
         }
     }
 
@@ -404,21 +404,22 @@ public class ServeurFTPResource {
             ftp.disconnect();
             return Response.status(200).entity("File downloaded successfully.").build();
         } catch (IOException e) {
-            throw new RuntimeException("cmdRenf : " + e.getMessage());
+            return Response.status(Status.BAD_REQUEST).entity("Exception : "+ e.getMessage()).build();
         }
     }
 
     @POST
     @Secured
     @Path("uploadFile/{path: .*}")
-    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
     public Response cmdUploadFile(@HeaderParam("Authorization") String authHeader,
             @PathParam("alias") String alias,
             @HeaderParam("username") String username,
             @HeaderParam("password") String password,
             @PathParam("path") String path,
-            @FormParam("file") String fileToUpload) {
+            @FormParam("file") String fileToUpload)
+        {
         if (username == null || password == null)
             return Response.status(Status.BAD_REQUEST).entity("Missing Headers.").build();
         if (path == null)
@@ -452,23 +453,28 @@ public class ServeurFTPResource {
             }
             // set files type
             ftp.setFileType(FTPClient.BINARY_FILE_TYPE);
-            // download du fichiers dans le dossier downloads
-            System.out.println(fileToUpload);
-            File firstLocalFile = new File(fileToUpload);
-            String firstRemoteFile = "downloads/"+fileToUpload;
-            InputStream inputStream = new FileInputStream(firstLocalFile);
-            System.out.println("Start uploading first file");
-            boolean done = ftp.storeFile(firstRemoteFile, inputStream);
-            inputStream.close();
-            if (done) {
-                System.out.println("The first file is uploaded successfully.");
+            // changer le repertoire actuel
+            if(!ftp.changeWorkingDirectory(path))
+            {
+                ftp.logout();
+                ftp.disconnect();
+                return Response.status(Status.BAD_REQUEST).entity("The path "+path+" not found.").build();
+            }
+            // chercher le fichier
+            File file = new File(fileToUpload);
+            InputStream inputStream = new FileInputStream(fileToUpload);
+            if (ftp.storeFile(file.getName(), inputStream)) {
+                inputStream.close();
+            } else {
+                inputStream.close();
+                return Response.status(Status.BAD_REQUEST).entity("File upload failed.").build();
             }
             //deconnection du serveur
             ftp.logout();
             ftp.disconnect();
-            return Response.status(200).entity("File downloaded successfully.").build();
+            return Response.status(200).entity("File uploaded successfully.").build();
         } catch (IOException e) {
-            throw new RuntimeException("cmdRenf : " + e.getMessage());
+            return Response.status(Status.BAD_REQUEST).entity("Exception : "+ e.getMessage()).build();
         }
     }
 }
