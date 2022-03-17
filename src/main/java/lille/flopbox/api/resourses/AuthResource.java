@@ -13,6 +13,9 @@ import javax.ws.rs.core.Response.Status;
 
 import lille.flopbox.api.FileManager;
 
+/**
+ * Gestion de l'authentification.
+ */
 @Path("auth")
 public class AuthResource {
 

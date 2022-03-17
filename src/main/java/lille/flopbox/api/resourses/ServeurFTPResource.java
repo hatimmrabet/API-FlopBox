@@ -28,6 +28,9 @@ import lille.flopbox.api.User;
 import lille.flopbox.api.UsersList;
 import lille.flopbox.api.auth.Secured;
 
+/***
+ * Gestion des commandes des serveurs FTP.
+ */
 @Path("{alias}")
 public class ServeurFTPResource {
 

@@ -6,6 +6,9 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
+/**
+ * Instance avec la liste de tous les utilisateurs de la platforme.
+ */
 public class UsersList {
 
     private static UsersList instance = null;

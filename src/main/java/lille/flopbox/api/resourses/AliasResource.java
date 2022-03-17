@@ -21,6 +21,9 @@ import lille.flopbox.api.User;
 import lille.flopbox.api.UsersList;
 import lille.flopbox.api.auth.Secured;
 
+/**
+ * Gestion des serveurs de chaque utilisateur.
+ */
 @Path("alias")
 public class AliasResource {
 

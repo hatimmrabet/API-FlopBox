@@ -12,6 +12,9 @@ import javax.ws.rs.core.Response.Status;
 import lille.flopbox.api.User;
 import lille.flopbox.api.UsersList;
 
+/**
+ * La gestion des commandes de creation des utilisateurs.
+ */
 @Path("users")
 public class UserResource {
 

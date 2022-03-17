@@ -7,6 +7,9 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
+/**
+ * Representation d'un utilisateur de la platforme.
+ */
 public class User {
 
     private String username;

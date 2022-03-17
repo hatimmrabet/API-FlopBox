@@ -12,6 +12,9 @@ import javax.json.JsonObject;
 import javax.json.JsonReader;
 import javax.json.JsonWriter;
 
+/**
+ * La gestion des fichiers
+ */
 public class FileManager {
 
     /**
