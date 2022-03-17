@@ -1,8 +1,6 @@
 package lille.flopbox.api.resourses;
 
 import java.util.Base64;
-import javax.json.Json;
-import javax.json.JsonObject;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
@@ -32,9 +30,8 @@ public class AuthResource {
     public Response login(@HeaderParam("username") String username, @HeaderParam("password") String password) {
         String encoded = Base64.getEncoder().encodeToString((username + ":" + password).getBytes());
         if (FileManager.canAccess(encoded)) {
-            JsonObject js = Json.createObjectBuilder().add("Authorization", "Basic " + encoded).build();
-            return Response.status(200).entity(js.toString()).build();
+            return Response.status(200).entity("Authorization : Basic " + encoded).build();
         }
-        return Response.status(Status.BAD_REQUEST).entity("username ou/et mot de passe sont incorrctes").build();
+        return Response.status(Status.UNAUTHORIZED).entity("username ou/et mot de passe sont incorrctes").build();
     }
 }

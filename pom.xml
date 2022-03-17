@@ -6,7 +6,7 @@
     <groupId>lille.flopbox.api</groupId>
     <artifactId>FlopBox</artifactId>
     <packaging>jar</packaging>
-    <version>1.0-SNAPSHOT</version>
+    <version>3.0</version>
     <name>FlopBox</name>
 
     <dependencyManagement>
