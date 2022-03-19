@@ -103,11 +103,12 @@ public class AliasResource {
      * @param serveur    : url du serveur
      * @return Reponse HTTP 200, 201, 400
      */
+    @Path("{alias}")
     @PUT
     @Secured
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response modifierServeur(@HeaderParam("Authorization") String authHeader, @FormParam("alias") String alias,
+    public Response modifierServeur(@HeaderParam("Authorization") String authHeader, @PathParam("alias") String alias,
             @FormParam("serveur") String serveur) {
         if (alias == null || serveur == null)
             return Response.status(Status.BAD_REQUEST)
