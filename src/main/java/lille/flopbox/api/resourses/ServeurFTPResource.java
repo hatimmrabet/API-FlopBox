@@ -537,6 +537,7 @@ public class ServeurFTPResource {
             @PathParam("path") String path,
             @FormDataParam("file") InputStream uploadedInputStream,
             @FormDataParam("file") FormDataContentDisposition fileDetail) {
+        System.out.println(fileDetail.getFileName());
         if (username == null || password == null)
             return Response.status(Status.BAD_REQUEST).entity("Missing Headers.").build();
         if (path == null)

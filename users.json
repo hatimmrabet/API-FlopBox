@@ -1,4 +1,9 @@
 {
+  "test": {
+    "username": "test",
+    "password": "12345",
+    "serveurs": {}
+  },
   "hatim": {
     "username": "hatim",
     "password": "12345",
