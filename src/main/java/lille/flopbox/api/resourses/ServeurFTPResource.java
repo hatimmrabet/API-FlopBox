@@ -272,7 +272,7 @@ public class ServeurFTPResource {
      * @param path        : le path vers le fichier à renommer
      * @param oldfilename the file name to change.
      * @param newfilename the name to give.
-     * @return
+     * @return Reponse Http avec message du réussite ou d'erreur
      */
     @PUT
     @Secured

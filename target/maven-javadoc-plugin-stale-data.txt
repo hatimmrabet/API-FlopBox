@@ -18,13 +18,13 @@
 -docencoding
 'UTF-8'
 -doctitle
-'FlopBox 1.0-SNAPSHOT API'
+'FlopBox 3.0 API'
 -linkoffline
 'https://docs.oracle.com/javase/8/docs/api' 'D:/Bureau/FlopBox/target/javadoc-bundle-options'
 -use
 -version
 -windowtitle
-'FlopBox 1.0-SNAPSHOT API'
+'FlopBox 3.0 API'
 lille.flopbox.api.auth
 lille.flopbox.api
 lille.flopbox.api.resourses
@@ -36,6 +36,7 @@ lille.flopbox.api.resourses
 'D:/Bureau/FlopBox/src/main/java/lille/flopbox/api/resourses/AuthResource.java'
 'D:/Bureau/FlopBox/src/main/java/lille/flopbox/api/resourses/ServeurFTPResource.java'
 'D:/Bureau/FlopBox/src/main/java/lille/flopbox/api/resourses/UserResource.java'
+'D:/Bureau/FlopBox/src/main/java/lille/flopbox/api/Serveur.java'
 'D:/Bureau/FlopBox/src/main/java/lille/flopbox/api/User.java'
 'D:/Bureau/FlopBox/src/main/java/lille/flopbox/api/UsersList.java'
 C:\Users\hatim\.m2\repository\org\glassfish\jersey\containers\jersey-container-grizzly2-http\2.35\jersey-container-grizzly2-http-2.35.jar = 1646339011247
@@ -66,21 +67,21 @@ C:\Users\hatim\.m2\repository\org\glassfish\jersey\media\jersey-media-multipart\
 C:\Users\hatim\.m2\repository\org\jvnet\mimepull\mimepull\1.9.13\mimepull-1.9.13.jar = 1647551119316
 C:\Users\hatim\.m2\repository\commons-net\commons-net\3.6\commons-net-3.6.jar = 1644571201832
 D:\Bureau\FlopBox\src\main\java = 1646985088015
-D:\Bureau\FlopBox\target\site\apidocs\allclasses-index.html = 1647556254562
-D:\Bureau\FlopBox\target\site\apidocs\allpackages-index.html = 1647556254565
-D:\Bureau\FlopBox\target\site\apidocs\constant-values.html = 1647556254441
-D:\Bureau\FlopBox\target\site\apidocs\element-list = 1647556254388
-D:\Bureau\FlopBox\target\site\apidocs\help-doc.html = 1647556254601
-D:\Bureau\FlopBox\target\site\apidocs\index-all.html = 1647556254593
-D:\Bureau\FlopBox\target\site\apidocs\index.html = 1647556254541
-D:\Bureau\FlopBox\target\site\apidocs\jquery-ui.overrides.css = 1647556254639
-D:\Bureau\FlopBox\target\site\apidocs\member-search-index.js = 1647556254570
-D:\Bureau\FlopBox\target\site\apidocs\module-search-index.js = 1647556254567
-D:\Bureau\FlopBox\target\site\apidocs\overview-summary.html = 1647556254595
-D:\Bureau\FlopBox\target\site\apidocs\overview-tree.html = 1647556254536
-D:\Bureau\FlopBox\target\site\apidocs\package-search-index.js = 1647556254568
-D:\Bureau\FlopBox\target\site\apidocs\script.js = 1647556254606
-D:\Bureau\FlopBox\target\site\apidocs\search.js = 1647556254608
-D:\Bureau\FlopBox\target\site\apidocs\stylesheet.css = 1647556254604
-D:\Bureau\FlopBox\target\site\apidocs\tag-search-index.js = 1647556254571
-D:\Bureau\FlopBox\target\site\apidocs\type-search-index.js = 1647556254569
+D:\Bureau\FlopBox\target\site\apidocs\allclasses-index.html = 1647706768078
+D:\Bureau\FlopBox\target\site\apidocs\allpackages-index.html = 1647706768081
+D:\Bureau\FlopBox\target\site\apidocs\constant-values.html = 1647706767957
+D:\Bureau\FlopBox\target\site\apidocs\element-list = 1647706767911
+D:\Bureau\FlopBox\target\site\apidocs\help-doc.html = 1647706768115
+D:\Bureau\FlopBox\target\site\apidocs\index-all.html = 1647706768106
+D:\Bureau\FlopBox\target\site\apidocs\index.html = 1647706768059
+D:\Bureau\FlopBox\target\site\apidocs\jquery-ui.overrides.css = 1647706768179
+D:\Bureau\FlopBox\target\site\apidocs\member-search-index.js = 1647706768086
+D:\Bureau\FlopBox\target\site\apidocs\module-search-index.js = 1647706768082
+D:\Bureau\FlopBox\target\site\apidocs\overview-summary.html = 1647706768108
+D:\Bureau\FlopBox\target\site\apidocs\overview-tree.html = 1647706768052
+D:\Bureau\FlopBox\target\site\apidocs\package-search-index.js = 1647706768084
+D:\Bureau\FlopBox\target\site\apidocs\script.js = 1647706768120
+D:\Bureau\FlopBox\target\site\apidocs\search.js = 1647706768123
+D:\Bureau\FlopBox\target\site\apidocs\stylesheet.css = 1647706768118
+D:\Bureau\FlopBox\target\site\apidocs\tag-search-index.js = 1647706768088
+D:\Bureau\FlopBox\target\site\apidocs\type-search-index.js = 1647706768085

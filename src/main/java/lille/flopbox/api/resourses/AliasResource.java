@@ -48,6 +48,7 @@ public class AliasResource {
      * 
      * @param authHeader : Token d'authentification
      * @param alias      : alias du serveur
+     * 
      * @return Reponse HTTP 200 ou 404.
      */
     @Path("{alias}")
@@ -70,6 +71,7 @@ public class AliasResource {
      * @param authHeader : Token d'authentification
      * @param alias      : alias su serveur
      * @param serveur    : url du serveur
+     * @param port       : numero port du serveur FTP
      * @return Reponse HTTP 400, 201.
      */
     @POST
@@ -91,7 +93,8 @@ public class AliasResource {
             return Response.status(Status.BAD_REQUEST).entity(msg).build();
         } else {
             u.addServeur(alias, new Serveur(serveur, port));
-            return Response.status(Status.CREATED).entity(UsersList.getInstance().getServeursByUsername(username)).build();
+            return Response.status(Status.CREATED).entity(UsersList.getInstance().getServeursByUsername(username))
+                    .build();
         }
     }
 
@@ -101,6 +104,7 @@ public class AliasResource {
      * @param authHeader : Token d'authentification
      * @param alias      : alias du serveur
      * @param serveur    : url du serveur
+     * @param port       : numero port du serveur FTP
      * @return Reponse HTTP 200, 201, 400
      */
     @Path("{alias}")
