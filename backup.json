@@ -1,23 +1,16 @@
 {
-    "hatim": {
-      "username": "hatim",
-      "password": "12345",
-      "serveurs": {
-        "test": "testval",
-        "ubuntu": "ftp.ubuntu.com",
-        "alias": "hatim",
-        "lille": "webtp.fil.univ-lille1.fr",
-        "url": "ftp.hatim"
-      }
-    },
-    "admin": {
-      "username": "admin",
-      "password": "12345",
-      "serveurs": {
-        "test": "testval",
-        "admin url": "ftp.admin",
-        "alias": "hatim"
-      }
+  "test": { "username": "test", "password": "12345", "serveurs": {} },
+  "hatim": {
+    "username": "hatim",
+    "password": "12345",
+    "serveurs": {
+      "ubuntu": { "url": "ftp.ubuntu.com", "port": 21 },
+      "lille": { "url": "webtp.fil.univ-lille1.fr", "port": 21 }
     }
+  },
+  "admin": {
+    "username": "admin",
+    "password": "12345",
+    "serveurs": {}
   }
-  
+}

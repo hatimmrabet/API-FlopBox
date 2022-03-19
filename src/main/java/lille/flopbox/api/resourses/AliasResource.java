@@ -17,6 +17,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import lille.flopbox.api.FileManager;
+import lille.flopbox.api.Serveur;
 import lille.flopbox.api.User;
 import lille.flopbox.api.UsersList;
 import lille.flopbox.api.auth.Secured;
@@ -76,7 +77,7 @@ public class AliasResource {
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
     public Response addServeur(@HeaderParam("Authorization") String authHeader, @FormParam("alias") String alias,
-            @FormParam("serveur") String serveur) {
+            @FormParam("serveur") String serveur, @FormParam("port") int port) {
         if (alias == null || serveur == null)
             return Response.status(Status.BAD_REQUEST)
                     .entity(Json.createObjectBuilder().add("error", "missing fields.").build()).build();
@@ -89,9 +90,8 @@ public class AliasResource {
                     .add("error", "alias exist already. To modify it's value, please use PUT.").build();
             return Response.status(Status.BAD_REQUEST).entity(msg).build();
         } else {
-            u.addServeur(alias, serveur);
-            return Response.status(Status.CREATED).entity(UsersList.getInstance().getServeursByUsername(username))
-                    .build();
+            u.addServeur(alias, new Serveur(serveur, port));
+            return Response.status(Status.CREATED).entity(UsersList.getInstance().getServeursByUsername(username)).build();
         }
     }
 
@@ -109,7 +109,7 @@ public class AliasResource {
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
     public Response modifierServeur(@HeaderParam("Authorization") String authHeader, @PathParam("alias") String alias,
-            @FormParam("serveur") String serveur) {
+            @FormParam("serveur") String serveur, @FormParam("port") int port) {
         if (alias == null || serveur == null)
             return Response.status(Status.BAD_REQUEST)
                     .entity(Json.createObjectBuilder().add("error", "missing fields.").build()).build();
@@ -118,10 +118,10 @@ public class AliasResource {
         User u = UsersList.getInstance().getUserByUsername(username);
         // verifier l'existance du serveur
         if (u.getServeurs().containsKey(alias)) {
-            u.addServeur(alias, serveur);
+            u.addServeur(alias, new Serveur(serveur, port));
             return Response.status(Status.OK).entity("Modified.").build();
         } else {
-            u.addServeur(alias, serveur);
+            u.addServeur(alias, new Serveur(serveur, port));
             return Response.status(Status.CREATED).entity(UsersList.getInstance().getServeursByUsername(username))
                     .build();
         }

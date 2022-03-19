@@ -1,6 +1,7 @@
 package lille.flopbox.api.resourses;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,6 +25,7 @@ import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
 import lille.flopbox.api.FileManager;
+import lille.flopbox.api.Serveur;
 import lille.flopbox.api.User;
 import lille.flopbox.api.UsersList;
 import lille.flopbox.api.auth.Secured;
@@ -58,7 +60,7 @@ public class ServeurFTPResource {
             return Response.status(Status.BAD_REQUEST).entity("Missing Headers.").build();
 
         User u = UsersList.getInstance().getUserByUsername(FileManager.getUsernameFromAuth(authHeader));
-        String serveur = u.getServeurs().get(alias);
+        Serveur serveur = u.getServeurs().get(alias);
 
         if (serveur == null)
             return Response.status(Status.NOT_FOUND).entity("Alias '" + alias + "' not found.").build();
@@ -68,7 +70,7 @@ public class ServeurFTPResource {
 
         FTPClient ftp = new FTPClient();
         try {
-            ftp.connect(serveur);
+            ftp.connect(serveur.url, serveur.port);
             // Verifier connection au serveur
             if (!FTPReply.isPositiveCompletion(ftp.getReplyCode())) {
                 ftp.disconnect();
@@ -141,14 +143,14 @@ public class ServeurFTPResource {
             return Response.status(Status.BAD_REQUEST).entity("Missing path.").build();
 
         User u = UsersList.getInstance().getUserByUsername(FileManager.getUsernameFromAuth(authHeader));
-        String serveur = u.getServeurs().get(alias);
+        Serveur serveur = u.getServeurs().get(alias);
 
         if (serveur == null)
             return Response.status(Status.NOT_FOUND).entity("Alias '" + alias + "' not found.").build();
 
         FTPClient ftp = new FTPClient();
         try {
-            ftp.connect(serveur);
+            ftp.connect(serveur.url, serveur.port);
             // Verifier connection au serveur
             if (!FTPReply.isPositiveCompletion(ftp.getReplyCode())) {
                 ftp.disconnect();
@@ -200,14 +202,14 @@ public class ServeurFTPResource {
             return Response.status(Status.BAD_REQUEST).entity("Missing path.").build();
 
         User u = UsersList.getInstance().getUserByUsername(FileManager.getUsernameFromAuth(authHeader));
-        String serveur = u.getServeurs().get(alias);
+        Serveur serveur = u.getServeurs().get(alias);
 
         if (serveur == null)
             return Response.status(Status.NOT_FOUND).entity("Alias '" + alias + "' not found.").build();
 
         FTPClient ftp = new FTPClient();
         try {
-            ftp.connect(serveur);
+            ftp.connect(serveur.url, serveur.port);
             // Verifier connection au serveur
             if (!FTPReply.isPositiveCompletion(ftp.getReplyCode())) {
                 ftp.disconnect();
@@ -222,6 +224,7 @@ public class ServeurFTPResource {
             }
             // suppression du dossier et son contenue
             if (!deleteFilesDirectories(ftp, path)) {
+                ftp.logout();
                 ftp.disconnect();
                 return Response.status(Status.BAD_REQUEST).entity("Directory deletion failed.").build();
             }
@@ -292,7 +295,7 @@ public class ServeurFTPResource {
             return Response.status(Status.BAD_REQUEST).entity("Missing Form params.").build();
 
         User u = UsersList.getInstance().getUserByUsername(FileManager.getUsernameFromAuth(authHeader));
-        String serveur = u.getServeurs().get(alias);
+        Serveur serveur = u.getServeurs().get(alias);
         if (path.equals(""))
             path = ".";
 
@@ -301,7 +304,7 @@ public class ServeurFTPResource {
 
         FTPClient ftp = new FTPClient();
         try {
-            ftp.connect(serveur);
+            ftp.connect(serveur.url, serveur.port);
             // Verifier connection au serveur
             if (!FTPReply.isPositiveCompletion(ftp.getReplyCode())) {
                 ftp.disconnect();
@@ -362,7 +365,7 @@ public class ServeurFTPResource {
             path = ".";
 
         User u = UsersList.getInstance().getUserByUsername(FileManager.getUsernameFromAuth(authHeader));
-        String serveur = u.getServeurs().get(alias);
+        Serveur serveur = u.getServeurs().get(alias);
 
         if (serveur == null)
             return Response.status(Status.NOT_FOUND).entity("Alias '" + alias + "' not found.").build();
@@ -370,7 +373,7 @@ public class ServeurFTPResource {
         FTPClient ftp = new FTPClient();
         try {
             ftp.setControlEncoding("UTF-8");
-            ftp.connect(serveur);
+            ftp.connect(serveur.url, serveur.port);
             // Verifier connection au serveur
             if (!FTPReply.isPositiveCompletion(ftp.getReplyCode())) {
                 ftp.disconnect();
@@ -434,7 +437,7 @@ public class ServeurFTPResource {
             path = ".";
 
         User u = UsersList.getInstance().getUserByUsername(FileManager.getUsernameFromAuth(authHeader));
-        String serveur = u.getServeurs().get(alias);
+        Serveur serveur = u.getServeurs().get(alias);
 
         if (serveur == null)
             return Response.status(Status.NOT_FOUND).entity("Alias '" + alias + "' not found.").build();
@@ -442,7 +445,7 @@ public class ServeurFTPResource {
         FTPClient ftp = new FTPClient();
         try {
             ftp.setControlEncoding("UTF-8");
-            ftp.connect(serveur);
+            ftp.connect(serveur.url, serveur.port);
             // Verifier connection au serveur
             if (!FTPReply.isPositiveCompletion(ftp.getReplyCode())) {
                 ftp.disconnect();
@@ -548,7 +551,7 @@ public class ServeurFTPResource {
             path = ".";
 
         User u = UsersList.getInstance().getUserByUsername(FileManager.getUsernameFromAuth(authHeader));
-        String serveur = u.getServeurs().get(alias);
+        Serveur serveur = u.getServeurs().get(alias);
 
         if (serveur == null)
             return Response.status(Status.NOT_FOUND).entity("Alias '" + alias + "' not found.").build();
@@ -556,7 +559,7 @@ public class ServeurFTPResource {
         FTPClient ftp = new FTPClient();
         try {
             ftp.setControlEncoding("UTF-8");
-            ftp.connect(serveur);
+            ftp.connect(serveur.url, serveur.port);
             // Verifier connection au serveur
             if (!FTPReply.isPositiveCompletion(ftp.getReplyCode())) {
                 ftp.disconnect();
@@ -591,6 +594,116 @@ public class ServeurFTPResource {
         } catch (IOException e) {
             return Response.status(Status.BAD_REQUEST).entity("Exception : " + e.getMessage()).build();
         }
+    }
+
+    /***
+     * Uploader un dossier vers un repertoire dans un serveur FTP
+     * 
+     * @param authHeader : Token d'authentification
+     * @param alias      : alias du serveur
+     * @param username   : nom d'utilisateur
+     * @param password   : mot de passe d'utilisateur
+     * @param path       : le path où on veut uploader le fichier.
+     * @param localpath  : le path vers le dossier en local
+     * @return Reponse Http avec message du réussite ou d'erreur
+     */
+    @POST
+    @Secured
+    @Path("uploadFolder/{path: .*}")
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response uploadFolder(@HeaderParam("Authorization") String authHeader,
+            @PathParam("alias") String alias,
+            @HeaderParam("username") String username,
+            @HeaderParam("password") String password,
+            @PathParam("path") String path,
+            @FormParam("file") String localpath) {
+        if (username == null || password == null)
+            return Response.status(Status.BAD_REQUEST).entity("Missing Headers.").build();
+        if (path == null || localpath == null)
+            return Response.status(Status.BAD_REQUEST).entity("Missing path.").build();
+        if (path.equals(""))
+            path = ".";
+
+        User u = UsersList.getInstance().getUserByUsername(FileManager.getUsernameFromAuth(authHeader));
+        Serveur serveur = u.getServeurs().get(alias);
+
+        if (serveur == null)
+            return Response.status(Status.NOT_FOUND).entity("Alias '" + alias + "' not found.").build();
+
+        FTPClient ftp = new FTPClient();
+        try {
+            ftp.setControlEncoding("UTF-8");
+            ftp.connect(serveur.url, serveur.port);
+            // Verifier connection au serveur
+            if (!FTPReply.isPositiveCompletion(ftp.getReplyCode())) {
+                ftp.disconnect();
+                return Response.status(Status.BAD_REQUEST).entity("Connection to server Failed").build();
+            }
+            // entering passive mode
+            ftp.enterLocalPassiveMode();
+            // connection
+            if (!ftp.login(username, password)) {
+                ftp.disconnect();
+                return Response.status(Status.BAD_REQUEST).entity("Username ou mot de passe sont incorrectes.").build();
+            }
+            // set files type
+            ftp.setFileType(FTPClient.BINARY_FILE_TYPE);
+            // changer le repertoire actuel
+            if (!ftp.changeWorkingDirectory(path)) {
+                ftp.logout();
+                ftp.disconnect();
+                return Response.status(Status.BAD_REQUEST).entity("The path " + path + " not found.").build();
+            }
+            // recuerer le fichier
+            File fileUpload = new File(localpath);
+            if (!fileUpload.exists())
+                return Response.status(Status.NOT_FOUND).entity("File in path:" + localpath + " not found.").build();
+            // uploader le dossier
+            if (!uploadFilesDirectories(ftp, ftp.printWorkingDirectory(), localpath))
+                return Response.status(Status.BAD_REQUEST).entity("File upload failed.").build();
+            ;
+            // deconnection du serveur
+            ftp.logout();
+            ftp.disconnect();
+            return Response.status(200).entity("File uploaded successfully.").build();
+        } catch (IOException e) {
+            return Response.status(Status.BAD_REQUEST).entity("Exception : " + e.getMessage()).build();
+        }
+    }
+
+    /**
+     * Uploader un dossier et son contenu.
+     * 
+     * @param ftp       : client ftp
+     * @param ftppath   : path du repertoire sur le serveur ftp
+     * @param localpath : path du repertoire au local
+     * @return true, s'il est uploadé, flase sinon.
+     */
+    public boolean uploadFilesDirectories(FTPClient ftp, String ftppath, String localpath) {
+        File fileUpload = new File(localpath);
+        try {
+            if (fileUpload.isDirectory()) {
+                if (!ftp.makeDirectory(ftppath + "/" + fileUpload.getName()))
+                    return false;
+                for (File f : fileUpload.listFiles()) {
+                    if (!uploadFilesDirectories(ftp, ftppath + "/" + fileUpload.getName(),
+                            localpath + "/" + f.getName()))
+                        return false;
+                }
+            } else {
+                FileInputStream uploadedInputStream = new FileInputStream(fileUpload);
+                if (!ftp.storeFile(ftppath + "/" + fileUpload.getName(), uploadedInputStream)) {
+                    uploadedInputStream.close();
+                    return false;
+                }
+                uploadedInputStream.close();
+            }
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
+        return true;
     }
 
 }

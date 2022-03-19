@@ -15,7 +15,7 @@ public class User {
     private String username;
     private String password;
     private String auth;
-    private HashMap<String, String> serveurs;
+    private HashMap<String, Serveur> serveurs;
 
     /**
      * Creation d'un User
@@ -27,7 +27,7 @@ public class User {
         this.username = username;
         this.password = pass;
         this.auth = new String(Base64.getEncoder().encode((username + ":" + password).getBytes()));
-        this.serveurs = new HashMap<String, String>();
+        this.serveurs = new HashMap<String, Serveur>();
     }
 
     /**
@@ -39,10 +39,10 @@ public class User {
         this.username = json.getString("username");
         this.password = json.getString("password");
         this.auth = new String(Base64.getEncoder().encode((username + ":" + password).getBytes()));
-        this.serveurs = new HashMap<String, String>();
+        this.serveurs = new HashMap<String, Serveur>();
         JsonObject arr = json.getJsonObject("serveurs");
         for (String key : arr.keySet()) {
-            this.serveurs.put(key, arr.getString(key));
+            this.serveurs.put(key, new Serveur(arr.get(key).asJsonObject().getString("url"),arr.get(key).asJsonObject().getInt("port")));
         }
         ;
     }
@@ -61,7 +61,7 @@ public class User {
      * 
      * @return la liste des serveurs
      */
-    public HashMap<String, String> getServeurs() {
+    public HashMap<String, Serveur> getServeurs() {
         return this.serveurs;
     }
 
@@ -71,7 +71,7 @@ public class User {
      * @param alias   : nom personnalisé du serveur
      * @param serveur : adresse URL du serveur
      */
-    public void addServeur(String alias, String serveur) {
+    public void addServeur(String alias, Serveur serveur) {
         this.serveurs.put(alias, serveur);
     }
 
@@ -95,7 +95,9 @@ public class User {
         builder.add("password", this.password);
         JsonObjectBuilder servsBuilder = Json.createObjectBuilder();
         for (String key : this.serveurs.keySet()) {
-            servsBuilder.add(key, this.serveurs.get(key));
+            JsonObjectBuilder oneServer = Json.createObjectBuilder();
+            oneServer.add("url", this.serveurs.get(key).url).add("port", this.serveurs.get(key).port);
+            servsBuilder.add(key, oneServer.build());
         }
         JsonObject servs = servsBuilder.build();
         builder.add("serveurs", servs);

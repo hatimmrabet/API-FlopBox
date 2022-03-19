@@ -63,7 +63,7 @@ public class UsersList {
      * @param username : username de l'utilisateur à chercher
      * @return la liste des serveurs de l'utilisateur
      */
-    public HashMap<String, String> getServeursByUsername(String username) {
+    public HashMap<String, Serveur> getServeursByUsername(String username) {
         return this.users.get(username).getServeurs();
     }
 
