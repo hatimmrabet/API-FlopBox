@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite tests="6" failures="0" name="lille.flopbox.api.AliasResourceTest" time="3.075" errors="0" skipped="0">
+<testsuite tests="6" failures="0" name="lille.flopbox.api.AliasResourceTest" time="2.143" errors="0" skipped="0">
   <properties>
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
     <property name="java.vm.version" value="17.0.1+12-LTS-39"/>
@@ -61,10 +61,10 @@
     <property name="sun.stdout.encoding" value="cp850"/>
     <property name="sun.cpu.isalist" value="amd64"/>
   </properties>
-  <testcase classname="lille.flopbox.api.AliasResourceTest" name="testDeleteAlias" time="2.03"/>
-  <testcase classname="lille.flopbox.api.AliasResourceTest" name="testWithWrongAuthHeader" time="0.23"/>
-  <testcase classname="lille.flopbox.api.AliasResourceTest" name="testCreateAlias" time="0.257"/>
-  <testcase classname="lille.flopbox.api.AliasResourceTest" name="testWithCorrectAuthHeader" time="0.229"/>
-  <testcase classname="lille.flopbox.api.AliasResourceTest" name="testModifAlias" time="0.17"/>
-  <testcase classname="lille.flopbox.api.AliasResourceTest" name="testWithMissingAuthHeader" time="0.159"/>
+  <testcase classname="lille.flopbox.api.AliasResourceTest" name="testDeleteAlias" time="1.491"/>
+  <testcase classname="lille.flopbox.api.AliasResourceTest" name="testWithWrongAuthHeader" time="0.141"/>
+  <testcase classname="lille.flopbox.api.AliasResourceTest" name="testCreateAlias" time="0.16"/>
+  <testcase classname="lille.flopbox.api.AliasResourceTest" name="testWithCorrectAuthHeader" time="0.125"/>
+  <testcase classname="lille.flopbox.api.AliasResourceTest" name="testModifAlias" time="0.124"/>
+  <testcase classname="lille.flopbox.api.AliasResourceTest" name="testWithMissingAuthHeader" time="0.102"/>
 </testsuite>
