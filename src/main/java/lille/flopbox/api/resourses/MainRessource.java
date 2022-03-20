@@ -22,7 +22,7 @@ public class MainRessource {
         jsb.add("PUT /alias/:alias", "Modifier un serveur.");
         jsb.add("DELETE /alias/:alias", "Supprimer un serveur.");
 
-        jsb.add("GET /:alias/files-details/:path", "Afficher le details des fichiers sur le serveur.");
+        jsb.add("GET /:alias/files-details/:path", "Afficher le details des fichiers sur le serveur avec lien de telechargement.");
         jsb.add("GET /:alias/empty-directory/:path", "creer un dossier vide dans le path specifie sur le serveur.");
         jsb.add("GET /:alias/file/:path", "Telecharger un fichier en local.");
         jsb.add("GET /:alias/directory/:path", "Telecharger un dossier en local.");

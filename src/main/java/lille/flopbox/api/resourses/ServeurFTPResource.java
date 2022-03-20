@@ -25,6 +25,7 @@ import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
 import lille.flopbox.api.FileManager;
+import lille.flopbox.api.Main;
 import lille.flopbox.api.Serveur;
 import lille.flopbox.api.User;
 import lille.flopbox.api.UsersList;
@@ -89,30 +90,44 @@ public class ServeurFTPResource {
                 return Response.status(Status.NOT_FOUND).entity("The path : " + path + " is not a directory.").build();
             }
             // recuperation des noms des fichiers
-            FTPFile[] fichiers = ftp.listFiles();
+            JsonArray files = getFilesDetails(ftp, path, alias);
             ftp.logout();
             ftp.disconnect();
-            return Response.status(Status.OK).entity(getFilesDetails(fichiers)).build();
+            return Response.status(Status.OK).entity(files).build();
         } catch (IOException e) {
             return Response.status(Status.BAD_REQUEST).entity("Exception : " + e.getMessage()).build();
         }
     }
 
     /**
-     * Tableau Json avec chaque fichiers et ses details.
+     * Tableau Json avec chaque fichiers et ses details, et lien pour le telecharger
      * 
-     * @param files : liste de fichier à utiliser
+     * @param ftp   : ftp client
+     * @param path  : path vers le fichier sur le serveur FTP
+     * @param alias : alias du serveur.
      * @return Tableau Json
      */
-    public JsonArray getFilesDetails(FTPFile[] files) {
+    public JsonArray getFilesDetails(FTPClient ftp, String path, String alias) {
+        FTPFile[] files;
         DateFormat dateFormater = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         JsonArrayBuilder ret = Json.createArrayBuilder();
-        for (FTPFile file : files) {
-            JsonObjectBuilder jsb = Json.createObjectBuilder();
-            jsb.add("name", file.getName());
-            jsb.add("size", file.getSize());
-            jsb.add("date", dateFormater.format(file.getTimestamp().getTime()));
-            ret.add(jsb.build());
+        try {
+            files = ftp.listFiles(path);
+            for (FTPFile file : files) {
+                JsonObjectBuilder jsb = Json.createObjectBuilder();
+                jsb.add("name", file.getName());
+                jsb.add("size", file.getSize());
+                jsb.add("date", dateFormater.format(file.getTimestamp().getTime()));
+                if (file.isDirectory()) {
+                    jsb.add("download", Main.BASE_URI + alias + "/directory" + path + file.getName());
+                    jsb.add("content", getFilesDetails(ftp, path + file.getName() + "/", alias));
+                } else
+                    jsb.add("download", Main.BASE_URI + alias + "/file" + path + file.getName());
+
+                ret.add(jsb.build());
+            }
+        } catch (IOException e1) {
+            System.out.println(e1.getMessage());
         }
         return ret.build();
     }
