@@ -1,5 +1,6 @@
 lille\flopbox\api\resourses\ServeurFTPResource.class
 lille\flopbox\api\FileManager.class
+lille\flopbox\api\resourses\MainRessource.class
 lille\flopbox\api\auth\AuthenticationFilter.class
 lille\flopbox\api\resourses\UserResource.class
 lille\flopbox\api\User.class

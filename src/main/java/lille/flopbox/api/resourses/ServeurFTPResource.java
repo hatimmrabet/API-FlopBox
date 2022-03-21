@@ -50,7 +50,7 @@ public class ServeurFTPResource {
     @GET
     @Secured
     @Path("files-details{path: (/.*)?}")
-    @Produces({ MediaType.APPLICATION_JSON, MediaType.TEXT_HTML })
+    @Produces(MediaType.APPLICATION_JSON)
     public Response listFiles(@HeaderParam("Authorization") String authHeader,
             @PathParam("alias") String alias,
             @HeaderParam("username") String username,
