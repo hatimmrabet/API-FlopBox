@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite tests="2" failures="0" name="lille.flopbox.api.UserResourceTest" time="0.214" errors="0" skipped="0">
+<testsuite tests="2" failures="0" name="lille.flopbox.api.UserResourceTest" time="0.217" errors="0" skipped="0">
   <properties>
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
     <property name="java.vm.version" value="17.0.1+12-LTS-39"/>
@@ -61,6 +61,6 @@
     <property name="sun.stdout.encoding" value="cp850"/>
     <property name="sun.cpu.isalist" value="amd64"/>
   </properties>
-  <testcase classname="lille.flopbox.api.UserResourceTest" name="testFailedCreationUser" time="0.111"/>
-  <testcase classname="lille.flopbox.api.UserResourceTest" name="testSuccessCreationUser" time="0.103"/>
+  <testcase classname="lille.flopbox.api.UserResourceTest" name="testFailedCreationUser" time="0.109"/>
+  <testcase classname="lille.flopbox.api.UserResourceTest" name="testSuccessCreationUser" time="0.108"/>
 </testsuite>
