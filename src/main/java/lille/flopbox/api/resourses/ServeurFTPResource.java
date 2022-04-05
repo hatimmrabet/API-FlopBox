@@ -418,7 +418,7 @@ public class ServeurFTPResource {
             // deconnection du serveur
             ftp.logout();
             ftp.disconnect();
-            return Response.status(200).entity("File downloaded successfully.").build();
+            return Response.status(200).entity(new FileInputStream("downloads/" + filename)).build();
         } catch (IOException e) {
             return Response.status(Status.BAD_REQUEST).entity("Exception : " + e.getMessage()).build();
         }
