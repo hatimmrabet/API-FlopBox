@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite tests="3" failures="0" name="lille.flopbox.api.ServeurFTPResourceTest" time="1.099" errors="0" skipped="0">
+<testsuite tests="3" failures="0" name="lille.flopbox.api.ServeurFTPResourceTest" time="1.864" errors="0" skipped="0">
   <properties>
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
     <property name="java.vm.version" value="17.0.1+12-LTS-39"/>
@@ -61,7 +61,7 @@
     <property name="sun.stdout.encoding" value="cp850"/>
     <property name="sun.cpu.isalist" value="amd64"/>
   </properties>
-  <testcase classname="lille.flopbox.api.ServeurFTPResourceTest" name="testWithMissingServerLogin" time="0.105"/>
-  <testcase classname="lille.flopbox.api.ServeurFTPResourceTest" name="testWithCorrectData" time="0.898"/>
-  <testcase classname="lille.flopbox.api.ServeurFTPResourceTest" name="testWithMissingAuthHeader" time="0.096"/>
+  <testcase classname="lille.flopbox.api.ServeurFTPResourceTest" name="testWithMissingServerLogin" time="0.085"/>
+  <testcase classname="lille.flopbox.api.ServeurFTPResourceTest" name="testWithCorrectData" time="1.716"/>
+  <testcase classname="lille.flopbox.api.ServeurFTPResourceTest" name="testWithMissingAuthHeader" time="0.063"/>
 </testsuite>

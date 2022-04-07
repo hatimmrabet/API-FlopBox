@@ -8,6 +8,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import javax.json.Json;
 import javax.json.JsonArray;
@@ -490,9 +492,13 @@ public class ServeurFTPResource {
                 ftp.disconnect();
                 return Response.status(Status.BAD_REQUEST).entity("Download Directory failed.").build();
             }
+            // Zipper le dossier
+            FileManager.zip("downloads/" + filename, "downloads/" + filename + ".zip");
+            // deconnection du serveur
             ftp.logout();
             ftp.disconnect();
-            return Response.status(200).entity("File downloaded successfully.").build();
+            // renvoiyé le inputStream du zip
+            return Response.status(200).entity(new FileInputStream("downloads/" + filename + ".zip")).build();
         } catch (IOException e) {
             return Response.status(Status.BAD_REQUEST).entity("Exception : " + e.getMessage()).build();
         }
@@ -625,17 +631,19 @@ public class ServeurFTPResource {
     @POST
     @Secured
     @Path("directory/{path: .*}")
-    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
     public Response uploadFolder(@HeaderParam("Authorization") String authHeader,
             @PathParam("alias") String alias,
             @HeaderParam("username") String username,
             @HeaderParam("password") String password,
             @PathParam("path") String path,
-            @FormParam("file") String localpath) {
+            @FormDataParam("file") InputStream uploadedInputStream,
+            @FormDataParam("file") FormDataContentDisposition fileDetail) {
+
         if (username == null || password == null)
             return Response.status(Status.BAD_REQUEST).entity("Missing Headers.").build();
-        if (path == null || localpath == null)
+        if (path == null || fileDetail.getFileName().equals(""))
             return Response.status(Status.BAD_REQUEST).entity("Missing path.").build();
         if (path.equals(""))
             path = ".";
@@ -670,17 +678,45 @@ public class ServeurFTPResource {
                 ftp.disconnect();
                 return Response.status(Status.BAD_REQUEST).entity("The path " + path + " not found.").build();
             }
-            // recuerer le fichier
-            File fileUpload = new File(localpath);
+            // recuperer le fichier
+            byte[] buffer = new byte[1024];
+            ZipInputStream zis = new ZipInputStream(uploadedInputStream);
+            ZipEntry zipEntry = zis.getNextEntry();
+            while (zipEntry != null) {
+                File newFile = FileManager.newFile(new File("./downloads/"), zipEntry);
+                if (zipEntry.isDirectory()) {
+                    if (!newFile.isDirectory() && !newFile.mkdirs()) {
+                        throw new RuntimeException("Failed to create directory " + newFile);
+                    }
+                } else {
+                    // fix for Windows-created archives
+                    File parent = newFile.getParentFile();
+                    if (!parent.isDirectory() && !parent.mkdirs()) {
+                        throw new RuntimeException("Failed to create directory " + parent);
+                    }
+                    // write file content
+                    FileOutputStream fos = new FileOutputStream(newFile);
+                    int len;
+                    while ((len = zis.read(buffer)) > 0) {
+                        fos.write(buffer, 0, len);
+                    }
+                    fos.close();
+                }
+                zipEntry = zis.getNextEntry();
+            }
+            zis.closeEntry();
+            zis.close();
+            // dézipper le dossier
+            File fileUpload = new File("./downloads/"+fileDetail.getFileName().replace(".zip",""));
             if (!fileUpload.exists())
-                return Response.status(Status.NOT_FOUND).entity("File in path:" + localpath + " not found.").build();
+                return Response.status(Status.NOT_FOUND).entity("File in path:" + fileUpload.getAbsolutePath() + " not found.").build();
             // uploader le dossier
-            if (!uploadFilesDirectories(ftp, ftp.printWorkingDirectory(), localpath))
+            if (!uploadFilesDirectories(ftp, ftp.printWorkingDirectory(), fileUpload.getCanonicalPath()))
                 return Response.status(Status.BAD_REQUEST).entity("File upload failed.").build();
-            ;
             // deconnection du serveur
             ftp.logout();
             ftp.disconnect();
+            // fileUpload.delete();
             return Response.status(200).entity("File uploaded successfully.").build();
         } catch (IOException e) {
             return Response.status(Status.BAD_REQUEST).entity("Exception : " + e.getMessage()).build();
