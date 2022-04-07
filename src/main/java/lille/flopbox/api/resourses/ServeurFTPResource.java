@@ -8,8 +8,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
 import javax.json.Json;
 import javax.json.JsonArray;
@@ -227,6 +225,7 @@ public class ServeurFTPResource {
         FTPClient ftp = new FTPClient();
         try {
             ftp.connect(serveur.url, serveur.port);
+            ftp.setListHiddenFiles(true); // afficher les fichiers cachés
             // Verifier connection au serveur
             if (!FTPReply.isPositiveCompletion(ftp.getReplyCode())) {
                 ftp.disconnect();
@@ -678,46 +677,23 @@ public class ServeurFTPResource {
                 ftp.disconnect();
                 return Response.status(Status.BAD_REQUEST).entity("The path " + path + " not found.").build();
             }
-            // recuperer le fichier
-            byte[] buffer = new byte[1024];
-            ZipInputStream zis = new ZipInputStream(uploadedInputStream);
-            ZipEntry zipEntry = zis.getNextEntry();
-            while (zipEntry != null) {
-                File newFile = FileManager.newFile(new File("./downloads/"), zipEntry);
-                if (zipEntry.isDirectory()) {
-                    if (!newFile.isDirectory() && !newFile.mkdirs()) {
-                        throw new RuntimeException("Failed to create directory " + newFile);
-                    }
-                } else {
-                    // fix for Windows-created archives
-                    File parent = newFile.getParentFile();
-                    if (!parent.isDirectory() && !parent.mkdirs()) {
-                        throw new RuntimeException("Failed to create directory " + parent);
-                    }
-                    // write file content
-                    FileOutputStream fos = new FileOutputStream(newFile);
-                    int len;
-                    while ((len = zis.read(buffer)) > 0) {
-                        fos.write(buffer, 0, len);
-                    }
-                    fos.close();
-                }
-                zipEntry = zis.getNextEntry();
-            }
-            zis.closeEntry();
-            zis.close();
-            // dézipper le dossier
+            // unzipper ll'archive
+            FileManager.unzip(uploadedInputStream);
             File fileUpload = new File("./downloads/"+fileDetail.getFileName().replace(".zip",""));
             if (!fileUpload.exists())
                 return Response.status(Status.NOT_FOUND).entity("File in path:" + fileUpload.getAbsolutePath() + " not found.").build();
             // uploader le dossier
             if (!uploadFilesDirectories(ftp, ftp.printWorkingDirectory(), fileUpload.getCanonicalPath()))
-                return Response.status(Status.BAD_REQUEST).entity("File upload failed.").build();
+            {
+                FileManager.DeleteFilesDirectories(fileUpload);
+                return Response.status(Status.BAD_REQUEST).entity("Directory upload failed.").build();
+            }
             // deconnection du serveur
             ftp.logout();
             ftp.disconnect();
-            // fileUpload.delete();
-            return Response.status(200).entity("File uploaded successfully.").build();
+            // suprimmer le dossier sur le serveur
+            FileManager.DeleteFilesDirectories(fileUpload);
+            return Response.status(200).entity("Directory uploaded successfully.").build();
         } catch (IOException e) {
             return Response.status(Status.BAD_REQUEST).entity("Exception : " + e.getMessage()).build();
         }
