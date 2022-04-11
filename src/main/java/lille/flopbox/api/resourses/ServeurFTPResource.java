@@ -449,7 +449,7 @@ public class ServeurFTPResource {
             return Response.status(Status.BAD_REQUEST).entity("Missing Headers.").build();
         if (path == null)
             return Response.status(Status.BAD_REQUEST).entity("Missing path.").build();
-        if (path.equals(""))
+        if (path.equals("") )
             path = ".";
 
         User u = UsersList.getInstance().getUserByUsername(FileManager.getUsernameFromAuth(authHeader));
@@ -484,20 +484,28 @@ public class ServeurFTPResource {
             }
             String pathParts[] = path.split("/");
             String filename = pathParts[pathParts.length - 1];
+            if(path == ".")
+                filename = alias;
             File dossier = new File("downloads/" + filename);
-            dossier.mkdir();
-            if (!getFilesDirectories(ftp, ftp.printWorkingDirectory())) {
+            if(!dossier.mkdir())
+                throw new RuntimeException("Cannot create directory " + dossier.getAbsolutePath());
+
+            // download du fichiers dans le dossier downloads
+            String workingDir =  ftp.printWorkingDirectory();
+            if (!getFilesDirectories(ftp, workingDir, dossier.getCanonicalPath())) {
                 ftp.logout();
                 ftp.disconnect();
                 return Response.status(Status.BAD_REQUEST).entity("Download Directory failed.").build();
             }
             // Zipper le dossier
-            FileManager.zip("downloads/" + filename, "downloads/" + filename + ".zip");
+            FileManager.zip(dossier.getCanonicalPath(), dossier.getCanonicalPath()+".zip");
+            // supprimer le dossier non zippé
+            FileManager.DeleteFilesDirectories(dossier);
             // deconnection du serveur
             ftp.logout();
             ftp.disconnect();
             // renvoiyé le inputStream du zip
-            return Response.status(200).entity(new FileInputStream("downloads/" + filename + ".zip")).build();
+            return Response.status(200).entity(new FileInputStream(dossier.getCanonicalPath()+".zip")).build();
         } catch (IOException e) {
             return Response.status(Status.BAD_REQUEST).entity("Exception : " + e.getMessage()).build();
         }
@@ -510,19 +518,20 @@ public class ServeurFTPResource {
      * @param path : path du repertoire courant
      * @return true, s'il est telechargé, flase sinon.
      */
-    public boolean getFilesDirectories(FTPClient ftp, String path) {
+    public boolean getFilesDirectories(FTPClient ftp, String remotePath, String downloadPath) {
         try {
-            FTPFile[] files = ftp.listFiles(path);
+            FTPFile[] files = ftp.listFiles(remotePath);
             for (FTPFile file : files) {
                 if (file.isDirectory()) {
-                    File dossier = new File("downloads/" + path + "/" + file.getName());
+                    File dossier = new File(downloadPath + "/" + file.getName());
+                    // System.out.println(dossier.getAbsolutePath());
                     dossier.mkdir();
-                    getFilesDirectories(ftp, path + "/" + file.getName());
+                    getFilesDirectories(ftp, remotePath + "/" + file.getName(), downloadPath + "/" + file.getName());
                 } else {
-                    OutputStream output = new FileOutputStream("downloads" + path + "/" + file.getName());
-                    if (!ftp.retrieveFile(path + "/" + file.getName(), output)) {
+                    OutputStream output = new FileOutputStream(downloadPath + "/" + file.getName());
+                    if (!ftp.retrieveFile(remotePath + "/" + file.getName(), output)) {
                         output.close();
-                        File localfile = new File("downloads/" + path + "/" + file.getName());
+                        File localfile = new File(downloadPath + "/" + file.getName());
                         localfile.delete();
                         return false;
                     }

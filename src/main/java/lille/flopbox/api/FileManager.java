@@ -182,6 +182,10 @@ public class FileManager {
         return destFile;
     }
 
+    /**
+     * Supprimer un fichier ou dossier locale et son contenu s'il n'est pas vide
+     * @param file
+     */
     public static void DeleteFilesDirectories(File file)
     {
         if(file.exists())
