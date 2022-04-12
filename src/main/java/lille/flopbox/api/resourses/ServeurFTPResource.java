@@ -10,8 +10,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
 import javax.json.Json;
-import javax.json.JsonArray;
-import javax.json.JsonArrayBuilder;
+import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -90,7 +89,7 @@ public class ServeurFTPResource {
                 return Response.status(Status.NOT_FOUND).entity("The path : " + path + " is not a directory.").build();
             }
             // recuperation des noms des fichiers
-            JsonArray files = getFilesDetails(ftp, path, alias);
+            JsonObject files = getFilesDetails(ftp, path, alias);
             ftp.logout();
             ftp.disconnect();
             return Response.status(Status.OK).entity(files).build();
@@ -107,10 +106,10 @@ public class ServeurFTPResource {
      * @param alias : alias du serveur.
      * @return Tableau Json
      */
-    public JsonArray getFilesDetails(FTPClient ftp, String path, String alias) {
+    public JsonObject getFilesDetails(FTPClient ftp, String path, String alias) {
         FTPFile[] files;
         DateFormat dateFormater = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        JsonArrayBuilder ret = Json.createArrayBuilder();
+        JsonObjectBuilder ret = Json.createObjectBuilder();
         try {
             files = ftp.listFiles(path);
             for (FTPFile file : files) {
@@ -118,13 +117,16 @@ public class ServeurFTPResource {
                 jsb.add("name", file.getName());
                 jsb.add("size", file.getSize());
                 jsb.add("date", dateFormater.format(file.getTimestamp().getTime()));
+                jsb.add("path", path + file.getName());
                 if (file.isDirectory()) {
+                    jsb.add("type","directory");
                     jsb.add("download", Main.BASE_URI + alias + "/directory" + path + file.getName());
                     jsb.add("content", getFilesDetails(ftp, path + file.getName() + "/", alias));
-                } else
+                } else {
+                    jsb.add("type","file");
                     jsb.add("download", Main.BASE_URI + alias + "/file" + path + file.getName());
-
-                ret.add(jsb.build());
+                }
+                ret.add(file.getName(), jsb.build());
             }
         } catch (IOException e1) {
             System.out.println(e1.getMessage());
@@ -449,7 +451,7 @@ public class ServeurFTPResource {
             return Response.status(Status.BAD_REQUEST).entity("Missing Headers.").build();
         if (path == null)
             return Response.status(Status.BAD_REQUEST).entity("Missing path.").build();
-        if (path.equals("") )
+        if (path.equals(""))
             path = ".";
 
         User u = UsersList.getInstance().getUserByUsername(FileManager.getUsernameFromAuth(authHeader));
@@ -484,28 +486,28 @@ public class ServeurFTPResource {
             }
             String pathParts[] = path.split("/");
             String filename = pathParts[pathParts.length - 1];
-            if(path == ".")
+            if (path == ".")
                 filename = alias;
             File dossier = new File("downloads/" + filename);
-            if(!dossier.mkdir())
+            if (!dossier.mkdir())
                 throw new RuntimeException("Cannot create directory " + dossier.getAbsolutePath());
 
             // download du fichiers dans le dossier downloads
-            String workingDir =  ftp.printWorkingDirectory();
+            String workingDir = ftp.printWorkingDirectory();
             if (!getFilesDirectories(ftp, workingDir, dossier.getCanonicalPath())) {
                 ftp.logout();
                 ftp.disconnect();
                 return Response.status(Status.BAD_REQUEST).entity("Download Directory failed.").build();
             }
             // Zipper le dossier
-            FileManager.zip(dossier.getCanonicalPath(), dossier.getCanonicalPath()+".zip");
+            FileManager.zip(dossier.getCanonicalPath(), dossier.getCanonicalPath() + ".zip");
             // supprimer le dossier non zippé
             FileManager.DeleteFilesDirectories(dossier);
             // deconnection du serveur
             ftp.logout();
             ftp.disconnect();
             // renvoiyé le inputStream du zip
-            return Response.status(200).entity(new FileInputStream(dossier.getCanonicalPath()+".zip")).build();
+            return Response.status(200).entity(new FileInputStream(dossier.getCanonicalPath() + ".zip")).build();
         } catch (IOException e) {
             return Response.status(Status.BAD_REQUEST).entity("Exception : " + e.getMessage()).build();
         }
@@ -688,12 +690,12 @@ public class ServeurFTPResource {
             }
             // unzipper ll'archive
             FileManager.unzip(uploadedInputStream);
-            File fileUpload = new File("./downloads/"+fileDetail.getFileName().replace(".zip",""));
+            File fileUpload = new File("./downloads/" + fileDetail.getFileName().replace(".zip", ""));
             if (!fileUpload.exists())
-                return Response.status(Status.NOT_FOUND).entity("File in path:" + fileUpload.getAbsolutePath() + " not found.").build();
+                return Response.status(Status.NOT_FOUND)
+                        .entity("File in path:" + fileUpload.getAbsolutePath() + " not found.").build();
             // uploader le dossier
-            if (!uploadFilesDirectories(ftp, ftp.printWorkingDirectory(), fileUpload.getCanonicalPath()))
-            {
+            if (!uploadFilesDirectories(ftp, ftp.printWorkingDirectory(), fileUpload.getCanonicalPath())) {
                 FileManager.DeleteFilesDirectories(fileUpload);
                 return Response.status(Status.BAD_REQUEST).entity("Directory upload failed.").build();
             }
