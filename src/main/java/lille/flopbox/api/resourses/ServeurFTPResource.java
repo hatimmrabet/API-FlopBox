@@ -117,6 +117,7 @@ public class ServeurFTPResource {
                 jsb.add("name", file.getName());
                 jsb.add("size", file.getSize());
                 jsb.add("date", dateFormater.format(file.getTimestamp().getTime()));
+                jsb.add("parentPath", path);
                 jsb.add("path", path + file.getName());
                 if (file.isDirectory()) {
                     jsb.add("type","directory");
@@ -609,7 +610,7 @@ public class ServeurFTPResource {
             if (!ftp.changeWorkingDirectory(path)) {
                 ftp.logout();
                 ftp.disconnect();
-                return Response.status(Status.BAD_REQUEST).entity("The path " + path + " not found.").build();
+                return Response.status(Status.BAD_REQUEST).entity("The path " + path + " not found, or not a directory.").build();
             }
             // uploader le fichier
             if (ftp.storeFile(fileDetail.getFileName(), uploadedInputStream)) {
