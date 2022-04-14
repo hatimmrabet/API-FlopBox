@@ -6,6 +6,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
@@ -45,6 +47,7 @@ public class ServeurFTPResource {
      * @param password   : mot de passe d'utilisateur
      * @param path       : le path des fichiers à lister
      * @return reponse json avec le details de chaque fichier.
+     * @throws UnsupportedEncodingException
      */
     @GET
     @Secured
@@ -54,8 +57,9 @@ public class ServeurFTPResource {
             @PathParam("alias") String alias,
             @HeaderParam("username") String username,
             @HeaderParam("password") String password,
-            @PathParam("path") String path) {
-
+            @PathParam("path") String path) throws UnsupportedEncodingException {
+        System.out.println(URLDecoder.decode(path, "UTF-8"));
+        path = URLDecoder.decode(path, "UTF-8");
         if (username == null || password == null)
             return Response.status(Status.BAD_REQUEST).entity("Missing Headers.").build();
 
@@ -67,6 +71,7 @@ public class ServeurFTPResource {
 
         if (path.equals(""))
             path = ".";
+        System.out.println(path);
 
         FTPClient ftp = new FTPClient();
         try {
@@ -120,11 +125,11 @@ public class ServeurFTPResource {
                 jsb.add("parentPath", path);
                 jsb.add("path", path + file.getName());
                 if (file.isDirectory()) {
-                    jsb.add("type","directory");
+                    jsb.add("type", "directory");
                     jsb.add("download", Main.BASE_URI + alias + "/directory" + path + file.getName());
                     jsb.add("content", getFilesDetails(ftp, path + file.getName() + "/", alias));
                 } else {
-                    jsb.add("type","file");
+                    jsb.add("type", "file");
                     jsb.add("download", Main.BASE_URI + alias + "/file" + path + file.getName());
                 }
                 ret.add(file.getName(), jsb.build());
@@ -144,6 +149,7 @@ public class ServeurFTPResource {
      * @param password   : mot de passe d'utilisateur
      * @param path       : le path du creation du fichier
      * @return Reponse Http avec message du creation ou d'erreur
+     * @throws UnsupportedEncodingException
      */
     @POST
     @Secured
@@ -153,8 +159,9 @@ public class ServeurFTPResource {
             @PathParam("alias") String alias,
             @HeaderParam("username") String username,
             @HeaderParam("password") String password,
-            @PathParam("path") String path) {
-
+            @PathParam("path") String path) throws UnsupportedEncodingException {
+        System.out.println(URLDecoder.decode(path, "UTF-8"));
+        path = URLDecoder.decode(path, "UTF-8");
         if (username == null || password == null)
             return Response.status(Status.BAD_REQUEST).entity("Missing Headers.").build();
         if (path == null)
@@ -203,6 +210,7 @@ public class ServeurFTPResource {
      * @param password   : mot de passe d'utilisateur
      * @param path       : le path du dossier à supprimer
      * @return Reponse Http avec message du réussite ou d'erreur
+     * @throws UnsupportedEncodingException
      */
     @DELETE
     @Secured
@@ -212,8 +220,9 @@ public class ServeurFTPResource {
             @PathParam("alias") String alias,
             @HeaderParam("username") String username,
             @HeaderParam("password") String password,
-            @PathParam("path") String path) {
-
+            @PathParam("path") String path) throws UnsupportedEncodingException {
+        System.out.println(URLDecoder.decode(path, "UTF-8"));
+        path = URLDecoder.decode(path, "UTF-8");
         if (username == null || password == null)
             return Response.status(Status.BAD_REQUEST).entity("Missing Headers.").build();
         if (path == null)
@@ -292,32 +301,26 @@ public class ServeurFTPResource {
      * @param oldfilename the file name to change.
      * @param newfilename the name to give.
      * @return Reponse Http avec message du réussite ou d'erreur
+     * @throws UnsupportedEncodingException
      */
     @PUT
     @Secured
-    @Path("rename/{path: .*}")
+    @Path("rename")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
     public Response renameFile(@HeaderParam("Authorization") String authHeader,
             @PathParam("alias") String alias,
             @HeaderParam("username") String username,
             @HeaderParam("password") String password,
-            @PathParam("path") String path,
             @FormParam("oldname") String oldfilename,
-            @FormParam("newname") String newfilename) {
-
+            @FormParam("newname") String newfilename) throws UnsupportedEncodingException {
         if (username == null || password == null)
             return Response.status(Status.BAD_REQUEST).entity("Missing Headers.").build();
-        if (path == null)
-            return Response.status(Status.BAD_REQUEST).entity("Missing path.").build();
         if (oldfilename == null || newfilename == null)
             return Response.status(Status.BAD_REQUEST).entity("Missing Form params.").build();
 
         User u = UsersList.getInstance().getUserByUsername(FileManager.getUsernameFromAuth(authHeader));
         Serveur serveur = u.getServeurs().get(alias);
-        if (path.equals(""))
-            path = ".";
-
         if (serveur == null)
             return Response.status(Status.NOT_FOUND).entity("Alias '" + alias + "' not found.").build();
 
@@ -335,12 +338,6 @@ public class ServeurFTPResource {
             if (!ftp.login(username, password)) {
                 ftp.disconnect();
                 return Response.status(Status.BAD_REQUEST).entity("Username ou mot de passe sont incorrectes.").build();
-            }
-            // change directory to path
-            if (!ftp.changeWorkingDirectory(path)) {
-                ftp.logout();
-                ftp.disconnect();
-                return Response.status(Status.BAD_REQUEST).entity("The path " + path + " not found.").build();
             }
             // renomer fichier
             if (!ftp.rename(oldfilename, newfilename)) {
@@ -365,6 +362,7 @@ public class ServeurFTPResource {
      * @param password   : mot de passe d'utilisateur
      * @param path       : le path vers le fichier à telecharger
      * @return Reponse Http avec message du réussite ou d'erreur
+     * @throws UnsupportedEncodingException
      */
     @GET
     @Secured
@@ -374,8 +372,9 @@ public class ServeurFTPResource {
             @PathParam("alias") String alias,
             @HeaderParam("username") String username,
             @HeaderParam("password") String password,
-            @PathParam("path") String path) {
-
+            @PathParam("path") String path) throws UnsupportedEncodingException {
+        System.out.println(URLDecoder.decode(path, "UTF-8"));
+        path = URLDecoder.decode(path, "UTF-8");
         if (username == null || password == null)
             return Response.status(Status.BAD_REQUEST).entity("Missing Headers.").build();
         if (path == null)
@@ -437,6 +436,7 @@ public class ServeurFTPResource {
      * @param password   : mot de passe d'utilisateur
      * @param path       : le path vers le dossier à telecharger
      * @return Reponse Http avec message du réussite ou d'erreur
+     * @throws UnsupportedEncodingException
      */
     @GET
     @Secured
@@ -446,8 +446,9 @@ public class ServeurFTPResource {
             @PathParam("alias") String alias,
             @HeaderParam("username") String username,
             @HeaderParam("password") String password,
-            @PathParam("path") String path) {
-
+            @PathParam("path") String path) throws UnsupportedEncodingException {
+        System.out.println(URLDecoder.decode(path, "UTF-8"));
+        path = URLDecoder.decode(path, "UTF-8");
         if (username == null || password == null)
             return Response.status(Status.BAD_REQUEST).entity("Missing Headers.").build();
         if (path == null)
@@ -559,10 +560,11 @@ public class ServeurFTPResource {
      * @param uploadedInputStream : input stream du fichier.
      * @param fileDetail          : details du fichier.
      * @return Reponse Http avec message du réussite ou d'erreur
+     * @throws UnsupportedEncodingException
      */
     @POST
     @Secured
-    @Path("file/{path: .*}")
+    @Path("file/{path: (.*)?}")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
     public Response uploadFile(@HeaderParam("Authorization") String authHeader,
@@ -571,8 +573,9 @@ public class ServeurFTPResource {
             @HeaderParam("password") String password,
             @PathParam("path") String path,
             @FormDataParam("file") InputStream uploadedInputStream,
-            @FormDataParam("file") FormDataContentDisposition fileDetail) {
-        System.out.println(fileDetail.getFileName());
+            @FormDataParam("file") FormDataContentDisposition fileDetail) throws UnsupportedEncodingException {
+        System.out.println(URLDecoder.decode(path, "UTF-8"));
+        path = URLDecoder.decode(path, "UTF-8");
         if (username == null || password == null)
             return Response.status(Status.BAD_REQUEST).entity("Missing Headers.").build();
         if (path == null)
@@ -581,7 +584,6 @@ public class ServeurFTPResource {
             return Response.status(Status.BAD_REQUEST).entity("Missing file.").build();
         if (path.equals(""))
             path = ".";
-
         User u = UsersList.getInstance().getUserByUsername(FileManager.getUsernameFromAuth(authHeader));
         Serveur serveur = u.getServeurs().get(alias);
 
@@ -610,7 +612,8 @@ public class ServeurFTPResource {
             if (!ftp.changeWorkingDirectory(path)) {
                 ftp.logout();
                 ftp.disconnect();
-                return Response.status(Status.BAD_REQUEST).entity("The path " + path + " not found, or not a directory.").build();
+                return Response.status(Status.BAD_REQUEST)
+                        .entity("The path " + path + " not found, or not a directory.").build();
             }
             // uploader le fichier
             if (ftp.storeFile(fileDetail.getFileName(), uploadedInputStream)) {
@@ -638,6 +641,7 @@ public class ServeurFTPResource {
      * @param path       : le path où on veut uploader le fichier.
      * @param localpath  : le path vers le dossier en local
      * @return Reponse Http avec message du réussite ou d'erreur
+     * @throws UnsupportedEncodingException
      */
     @POST
     @Secured
@@ -650,8 +654,9 @@ public class ServeurFTPResource {
             @HeaderParam("password") String password,
             @PathParam("path") String path,
             @FormDataParam("file") InputStream uploadedInputStream,
-            @FormDataParam("file") FormDataContentDisposition fileDetail) {
-
+            @FormDataParam("file") FormDataContentDisposition fileDetail) throws UnsupportedEncodingException {
+        System.out.println(URLDecoder.decode(path, "UTF-8"));
+        path = URLDecoder.decode(path, "UTF-8");
         if (username == null || password == null)
             return Response.status(Status.BAD_REQUEST).entity("Missing Headers.").build();
         if (path == null || fileDetail.getFileName().equals(""))
